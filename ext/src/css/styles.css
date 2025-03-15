@@ -1,0 +1,285 @@
+:root {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/**
+*   CSS BOTONES PAG QUEUE
+*/
+
+.mycustom-jumbotron {
+    height: 100% !important;
+}
+
+.copiar-aqui {
+    cursor: copy;
+}
+
+.editar-aqui:focus {
+    outline: none;
+    font-weight: bold;
+    color: #000;
+    background-color: #f5f5f533 !important;
+    box-shadow: 0 0 2px #fff inset;
+}
+
+.texto-copiado {
+    outline: none;
+    color: #fff !important;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.15));
+}
+
+.texto-copiado a {
+    color: #fff !important;
+}
+
+.texto-copiado::selection {
+    background-color: transparent;
+    color: #f5f5f5;
+}
+
+.tbl-hover tr:hover {
+    color: #000;
+    font-weight: normal;
+}
+
+.tbl-hover tr:hover:first-child {
+    color: #212529;
+    background-image: none;
+}
+
+.expandir-div {
+    transition: color 300ms ease;
+}
+
+.expandir-div:hover {
+    color: #fff;
+}
+
+.expandir-div:hover .div-group {
+    width: 100%;
+    padding-right: 6px !important;
+    border-bottom: 1px solid #333;
+}
+
+.expandir-div:hover .div-group label {
+    visibility: visible;
+}
+
+.expandir-div:hover .div-group .hd-item {
+    visibility: visible;
+}
+
+.expandir-div:not(:hover) .div-group label {
+    animation: ocultar 250ms ease;
+}
+
+.expandir-div:not(:hover) .div-group .hd-item {
+    animation: ocultar 250ms ease;
+}
+
+.expandir-div .div-group {
+    position: absolute !important;
+    top: 0%;
+    left: 4px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: start;
+    gap: 0;
+    min-height: 24px !important;
+    min-width: 31px !important;
+    width: 28px;
+    height: 100%;
+    overflow: hidden;
+    transition: width 0.5s linear;
+}
+
+.div-group label {
+    visibility: hidden;
+    height: 80% !important;
+    width: 32px !important;
+    padding: 0.375rem 0.40rem !important;
+    background-color: #fff !important;
+    transition: background 250ms ease;
+    border: 1px solid #fff !important;
+    border-radius: 5px 0 0 5px !important;
+}
+
+.div-group .hd-item {
+    visibility: hidden;
+    font-family: sans-serif !important;
+    text-transform: uppercase;
+    width: 100% !important;
+    height: 80% !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid #fff !important;
+    border-radius: 0 5px 5px 0 !important;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes ocultar {
+    from {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes filtar {
+    from {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}
+
+@keyframes no-filtar {
+    from {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+.filtrar-linea {
+    animation: filtar 100ms forwards;
+}
+
+.desfiltrar-linea {
+    animation: no-filtar 200ms forwards;
+}
+
+
+/* 
+*   CSS PAGINA VORTEX 
+*/
+
+.container-fluid>#form1 {
+    padding: 0;
+}
+
+
+#MainContent {
+    margin-top: 1rem;
+}
+
+#ContentPlaceHolder1_RunCardDataList,
+#ContentPlaceHolder1_RunCardDataList table {
+    margin: 0.5rem;
+    width: 100%;
+}
+
+#ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0 {
+    display: block;
+    width: 95%;
+    field-sizing: content;
+    padding: 8px;
+    font-weight: bolder;
+    resize: none;
+}
+
+.CardLabels {
+    max-width: 90px;
+    vertical-align: top;
+}
+
+.nombreProducto {
+    padding: 10px;
+    width: 450px;
+}
+
+.marcoTitulo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 450px !important;
+    gap: 0.5rem;
+}
+
+
+/**
+*   VISTA DE IMPRESION DE LA PAG VORTEX
+*/
+
+@media print and (orientation: portrait) {
+    #ContentPlaceHolder1_RunCardDataList table {
+        width: calc(100% - 4rem) !important;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList table table {
+        width: calc(100% - 0.5rem) !important;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList_imgVPONumber_0 {
+        position: relative;
+        right: 150px;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList_imgPartType_0 {
+        position: relative;
+        right: 110px;
+    }
+}
+
+@media print and (orientation: landscape) {
+
+    body {
+        margin: 0 !important;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList table {
+        width: calc(100% - 2.5rem) !important;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList table table {
+        width: calc(100% - 0.5rem) !important;
+    }
+
+    .marcoTitulo {
+        width: max-content !important;
+        flex-direction: row;
+        padding-left: 9rem;
+        gap: 1rem;
+    }
+
+    .marcoTitulo span:first-child::after {
+        content: "-";
+        margin-left: 1rem;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList_imgVPONumber_0 {
+        position: relative;
+        right: 275px;
+    }
+
+    #ContentPlaceHolder1_RunCardDataList_imgPartType_0 {
+        position: relative;
+        right: 235px;
+    }
+}
