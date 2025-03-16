@@ -10,17 +10,17 @@ function transformarNombre() {
         const tablaDescriptiva = obtenerSelectorPorIndice("table", 2);
         const campoTitulo = obtenerSelectorPorObjeto(tablaDescriptiva, "tr td");
         const nombreProducto = campoTitulo.textContent.split("-");
-    
+
         campoTitulo.id = "nombreProducto";
         removerAtributo(campoTitulo, 'align');
         establecerTextoPorId(campoTitulo.id, '');
-    
+
         const prt01 = nuevoSpan('nom01', 'nom01', nombreProducto.shift().trim());
         const prt02 = nuevoSpan('nom02', 'nom02', nombreProducto
             .toString()
             .trim()
             .replace(/,/g, "-"));
-    
+
         const marcoTitulo = nuevoDIV("tituloRC", "marcoTitulo");
         nuevoContenedor(marcoTitulo, [prt01, prt02]);
         nuevoContenedor(campoTitulo, [marcoTitulo]);
@@ -34,7 +34,7 @@ function propiedadesTextArea() {
         const txtDetalles = obtenerObjetoPorID(
             "ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0"
         );
-    
+
         ["style", "rows", "cols", "heigth"].forEach(iAttr => {
             removerAtributo(txtDetalles, iAttr);
         });
@@ -46,7 +46,7 @@ function propiedadesTextArea() {
 function formatearDescripcion(pInfo) {
     const descripcion = obtenerValorPorID('ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0').trim();
 
-    return obtenerValorPorID('ConnectedVortexUser').includes('mejias1x') ? `${descripcion} ${pInfo} ${formatoLista(descripcion.split(';'))}` : `${descripcion} ${pInfo}\n`;
+    return obtenerValorPorID('ConnectedVortexUser').includes('mejias1x') ? `${descripcion} ${pInfo} ${formatoLista(descripcion.split(';'))}` : `${descripcion} ${pInfo}\n`;
 }
 
 function completarCampos() {
@@ -56,7 +56,7 @@ function completarCampos() {
         const getVPO = recuperarVPO(getData);
         establecerValorPorID(
             'ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0',
-            formatearDescripcion(`\n\nComment:\n\t- ${getVPO.obtenerComentario()}\n`));
+            formatearDescripcion(getVPO.mostrarInformacion()));
 
         setTimeout(() => {
             window.print();
@@ -66,7 +66,7 @@ function completarCampos() {
 }
 
 function iniciarTemporizador() {
-    const rgx = /(\d+)/g; 
+    const rgx = /(\d+)/g;
     const titulo = document.querySelector('head title');
     titulo.textContent = `[ Cerrando en: 04s... ]`;
 

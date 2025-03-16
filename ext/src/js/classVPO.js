@@ -11,9 +11,9 @@ class ClassVPO {
 
     convertirATexto() {
         return JSON.stringify({
-            'numero' : this.numero,
-            'cantidad' : this.cantidad,
-            'maquina' : this.maquina
+            'numero': this.numero,
+            'cantidad': this.cantidad,
+            'maquina': this.maquina
         });
     }
 
@@ -27,5 +27,9 @@ class ClassVPO {
 
     obtenerComentario() {
         return `${this.numero} // QTY ${this.cantidad} // ${this.maquina}`;
+    }
+
+    mostrarInformacion() {
+        return `\n\nInfo: - ${this.numero}\n\t - ${this.maquina}\n\t - Qty: ${this.cantidad}\n`;
     }
 }

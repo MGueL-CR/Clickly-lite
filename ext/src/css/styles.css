@@ -238,12 +238,12 @@
 
     #ContentPlaceHolder1_RunCardDataList_imgVPONumber_0 {
         position: relative;
-        right: 150px;
+        right: 150px !important;
     }
 
     #ContentPlaceHolder1_RunCardDataList_imgPartType_0 {
         position: relative;
-        right: 110px;
+        right: 110px !important;
     }
 }
 
@@ -275,11 +275,11 @@
 
     #ContentPlaceHolder1_RunCardDataList_imgVPONumber_0 {
         position: relative;
-        right: 275px;
+        right: 275px !important;
     }
 
     #ContentPlaceHolder1_RunCardDataList_imgPartType_0 {
         position: relative;
-        right: 235px;
+        right: 235px !important;
     }
 }

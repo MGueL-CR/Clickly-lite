@@ -55,7 +55,8 @@ function guardarValorEnSS(pAlias, pValor) {
 }
 
 function leerValorEnSS(pAlias) {
-    return decodificarValor(window.sessionStorage.getItem(codificarValor(pAlias)));
+    const vValor = window.sessionStorage.getItem(codificarValor(pAlias));
+    return vValor !== null ? decodificarValor(vValor) : vValor;
 }
 
 function codificarValor(pValor) {
