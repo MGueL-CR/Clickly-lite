@@ -34,6 +34,9 @@ function resaltarTexto(e) {
     for (const fila of obtenerFilas('MainContent_ReturnsDivGridView')) {
         if (obtenerHijo(fila, 0).textContent !== 'Lot') {
             obtenerHijo(fila, 0).innerHTML = obtenerHijo(fila, 0).textContent.replace(regExp, '<mark>$1</mark>');
+            if (obtenerHijo(fila, 0).innerHTML.includes('mark')) {
+                fila.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 function mainPrintRC() {
     crearPopoverError();
     transformarNombre();
-    propiedadesTextArea();
     completarCampos();
 }
 
@@ -29,24 +28,23 @@ function transformarNombre() {
     }
 }
 
-function propiedadesTextArea() {
+function propiedadesTextArea(pInfo) {
     try {
         const txtDetalles = obtenerObjetoPorID(
             "ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0"
         );
-
+        const nvaDescripcion = {
+            'original': txtDetalles.value.trim(), 'adicional': pInfo,
+            'usuario': obtenerValorPorID('ConnectedVortexUser').includes('mejias1x'),
+            'listaLotes': formatoLista(txtDetalles.value.trim().split(';'))
+        };
         ["style", "rows", "cols", "heigth"].forEach(iAttr => {
             removerAtributo(txtDetalles, iAttr);
         });
+        txtDetalles.value = nvaDescripcion.usuario ? `${nvaDescripcion.original} ${nvaDescripcion.adicional} ${nvaDescripcion.listaLotes}` : `${nvaDescripcion.original} ${nvaDescripcion.adicional}\n`;
     } catch (err) {
         mostrarAlertaError(err);
     }
-}
-
-function formatearDescripcion(pInfo) {
-    const descripcion = obtenerValorPorID('ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0').trim();
-
-    return obtenerValorPorID('ConnectedVortexUser').includes('mejias1x') ? `${descripcion} ${pInfo} ${formatoLista(descripcion.split(';'))}` : `${descripcion} ${pInfo}\n`;
 }
 
 function completarCampos() {
@@ -54,10 +52,7 @@ function completarCampos() {
 
     if (getData !== null) {
         const getVPO = recuperarVPO(getData);
-        establecerValorPorID(
-            'ContentPlaceHolder1_RunCardDataList_vpodescriptionLabel_0',
-            formatearDescripcion(getVPO.mostrarInformacion()));
-
+        propiedadesTextArea(getVPO.mostrarInformacion());
         setTimeout(() => {
             window.print();
             iniciarTemporizador();

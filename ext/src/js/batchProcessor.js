@@ -33,11 +33,9 @@ function formatoLista(pArreglo) {
 }
 
 function separarLotes(pSources) {
-    console.log(pSources)
-    let textoSeparado = "\n\nSourceLots:\n";
+    let textoSeparado = "\n\nLots:\n";
     for (const item of pSources) {
         textoSeparado += `\t- ${item.trim().split(' ')[0]}\n`;
-        console.log(item)
     }
     return textoSeparado;
 }

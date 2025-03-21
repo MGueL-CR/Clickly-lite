@@ -1,7 +1,7 @@
 class ClassVPO {
     caja = 1;
     urlVortex =
-        "http://vortexreports.intel.com/Reports/Card/RunCardFilter.aspx";
+        "https://vortexreports.intel.com/Reports/Card/RunCardFilter.aspx";
 
     constructor(pNumero, pCantidad, pMaquina) {
         this.numero = pNumero;
@@ -30,6 +30,6 @@ class ClassVPO {
     }
 
     mostrarInformacion() {
-        return `\n\nInfo: - ${this.numero}\n\t - ${this.maquina}\n\t - Qty: ${this.cantidad}\n`;
+        return `\n\nVPO: - ${this.numero}\n\t  - ${this.maquina}\n\t  - Qty: ${this.cantidad}\n`;
     }
 }
