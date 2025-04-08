@@ -59,6 +59,10 @@ function leerValorEnSS(pAlias) {
     return vValor !== null ? decodificarValor(vValor) : vValor;
 }
 
+function removerValorEnSS(pAlias) {
+    window.sessionStorage.removeItem(codificarValor(pAlias));
+}
+
 function codificarValor(pValor) {
     return window.btoa(pValor);
 }
