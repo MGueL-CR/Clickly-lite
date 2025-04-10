@@ -1,18 +1,22 @@
 function mainQueueIC() {
     crearPopoverError();
     establecerFunciones(obtenerTablas());
-    completarSelectAssignTo();
+    completarSelectAssignTo(leerValorEnSS('assigned'));
     mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
 }
 
 function mantenerFiltros(pTipo, pAsignado) {
     if (pTipo !== 'all' && pTipo !== null) {
-        establecerValorPorID('cmbType', pTipo);
-        aplicarFiltroPorTipo(pTipo);
+        if (obtenerObjetoPorID('cmbType')) {
+            establecerValorPorID('cmbType', pTipo);
+            aplicarFiltroPorTipo(pTipo);
+        }
     }
-    if (pAsignado !== 'Todos...' && pAsignado !== null) {
-        establecerValorPorID('cmbAssignTo', pAsignado);
-        aplicarFiltroPorAsignado(pAsignado);
+    if (pAsignado !== 'all' && pAsignado !== null) {
+        if (obtenerObjetoPorID('cmbAssignTo')) {
+            establecerValorPorID('cmbAssignTo', pAsignado);
+            aplicarFiltroPorAsignado(pAsignado);
+        }
     }
 }
 
@@ -61,13 +65,9 @@ function aplicarFiltrosCombinados(pTipo, pAsignado) {
             const cumpleAsignado = pAsignado === 'all' || obtenerHijo(obtenerHijo(fila, 6), 0).value === pAsignado;
 
             if (cumpleTipo && cumpleAsignado) {
-                removerClases(fila, 'filtrar-linea');
-                agregarClases(fila, 'desfiltrar-linea');
                 removerAtributo(fila, 'hidden', false);
             } else {
                 addAtributo(fila, 'hidden', true);
-                removerClases(fila, 'desfiltrar-linea');
-                agregarClases(fila, 'filtrar-linea');
             }
         }
     }
@@ -144,7 +144,7 @@ function propiedadCabeceraUno(pCol01) {
     cmbFiltro.addEventListener('change', (e) => { aplicarFiltroPorTipo(e.target.value); });
     nuevoContenedor(lblFiltro, [nuevoIcono('icoFiltrar', 'bi bi-funnel-fill')]);
     nuevoContenedor(cmbFiltro, [
-        nuevaOpcion('all', 'Todos...'),
+        nuevaOpcion('all', '·:: Todos ::·'),
         nuevaOpcion('Correlation MIR', 'Correlations'),
         nuevaOpcion('ISSUE', 'VPOs (ISSUE)'),
         nuevaOpcion('MIR Local Lab', 'Internals'),
@@ -162,7 +162,7 @@ function propiedadCabeceraSeis(pCol06) {
     cmbFiltro.addEventListener('change', (e) => { aplicarFiltroPorAsignado(e.target.value); });
     nuevoContenedor(lblFiltro, [nuevoIcono('icoFiltrar', 'bi bi-funnel-fill')]);
     nuevoContenedor(cmbFiltro, [
-        nuevaOpcion('all', 'Todos...')]);
+        nuevaOpcion('all', '·:: Todos ::·')]);
     nuevoContenedor(dvFiltro, [lblFiltro, cmbFiltro]);
     nuevoContenedor(pCol06, [dvFiltro]);
 }
@@ -170,22 +170,33 @@ function propiedadCabeceraSeis(pCol06) {
 function propiedadCabeceraSiete(pCol07) {
     pCol07.className = 'position-relative expandir-div';
     const dvReset = nuevoDIV('dvReset', 'div-group');
-    const spnReset = nuevoSpan('spnReset', 'align-self-center pt-1', 'Borrar')
-    const btnReset = nuevoBoton('btnReset', 'btn form-select hd-item d-flex', 'Borrar filtros', '#000');
-    nuevoContenedor(btnReset, [nuevoIcono('icoReset', 'align-self-center pt-1 bi bi-trash-fill'), spnReset]);
-    nuevoContenedor(dvReset, [btnReset]);
+    const lblReset = nuevoLabel('btnReset', '');
+    agregarClases(lblReset, 'input-group-text');
+    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar')
+    const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
+    btnReset.addEventListener('click', () => {
+        aplicarFiltrosCombinados('all', 'all');
+        removerValorEnSS('porTipo');
+        removerValorEnSS('porAsignado');
+        establecerValorPorID('cmbType', 'all');
+        establecerValorPorID('cmbAssignTo', 'all');
+    })
+    nuevoContenedor(lblReset, [nuevoIcono('icoReset', 'bi bi-trash-fill')])
+    nuevoContenedor(btnReset, [spnReset]);
+    nuevoContenedor(dvReset, [lblReset, btnReset]);
     nuevoContenedor(pCol07, [dvReset]);
-
 }
 
-function completarSelectAssignTo() {
-    [...new Set(leerValorEnSS('assigned').split(';'))].forEach(item => {
-        if (item.trim()) {
-            const nvaOpcion = nuevaOpcion(item.split(':')[1], item.split(':')[0]);
-            nuevoContenedor(obtenerObjetoPorID('cmbAssignTo'), [nvaOpcion]);
-        }
-    });
-    removerValorEnSS('assigned');
+function completarSelectAssignTo(pLista) {
+    if (pLista) {
+        [...new Set(pLista.split(';'))].forEach(item => {
+            if (item.trim()) {
+                const nvaOpcion = nuevaOpcion(item.split(':')[1], item.split(':')[0]);
+                nuevoContenedor(obtenerObjetoPorID('cmbAssignTo'), [nvaOpcion]);
+            }
+        });
+        removerValorEnSS('assigned');
+    }
 }
 
 function generarListaAsignaciones(pSelect) {
@@ -226,7 +237,7 @@ function propiedadesTablaRetorno(pFila) {
         propiedadCabeceraCero(obtenerHijo(pFila, 0));
         propiedadCabeceraUno(obtenerHijo(pFila, 1));
         propiedadCabeceraSeis(obtenerHijo(pFila, 6));
-        //propiedadCabeceraSiete(obtenerHijo(pFila, 7));
+        propiedadCabeceraSiete(obtenerHijo(pFila, 7));
     } else {
         generarListaAsignaciones(obtenerHijo(obtenerHijo(pFila, 6), 0));
     }

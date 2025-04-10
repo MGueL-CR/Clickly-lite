@@ -141,39 +141,6 @@
     }
 }
 
-@keyframes filtar {
-    from {
-        opacity: 1;
-        transform: scaleY(1);
-    }
-
-    to {
-        opacity: 0;
-        transform: scaleY(0);
-    }
-}
-
-@keyframes no-filtar {
-    from {
-        opacity: 0;
-        transform: scaleY(0);
-    }
-
-    to {
-        opacity: 1;
-        transform: scaleY(1);
-    }
-}
-
-.filtrar-linea {
-    animation: filtar 100ms forwards;
-}
-
-.desfiltrar-linea {
-    animation: no-filtar 200ms forwards;
-}
-
-
 /* 
 *   CSS PAGINA VORTEX 
 */

@@ -2,7 +2,7 @@
   "name": "Clickly (Lite)",
   "description": "Simplifica, automatiza y ahorra tiempo en esas tareas repetitivas de sus requests.",
   "author": "@MGueL-CR",
-  "version": "1.4.0408.25",
+  "version": "1.5.0411.25",
   "manifest_version": 3,
   "action": {
     "default_popup": "/src/assets/popupWeb.html",

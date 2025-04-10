@@ -38,7 +38,7 @@ function propiedadesTextArea(pInfo) {
             'usuario': obtenerValorPorID('ConnectedVortexUser').includes('mejias1x'),
             'listaLotes': formatoLista(txtDetalles.value.trim().split(';'))
         };
-        ["style", "rows", "cols", "heigth"].forEach(iAttr => {
+        ["style", "rows", "cols", "heigth", "readonly"].forEach(iAttr => {
             removerAtributo(txtDetalles, iAttr);
         });
         txtDetalles.value = nvaDescripcion.usuario ? `${nvaDescripcion.original} ${nvaDescripcion.adicional} ${nvaDescripcion.listaLotes}` : `${nvaDescripcion.original} ${nvaDescripcion.adicional}\n`;
