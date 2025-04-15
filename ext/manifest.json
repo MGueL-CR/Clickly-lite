@@ -37,6 +37,7 @@
         "./src/css/styles.css"
       ],
       "matches": [
+        "https://crvle-request-tool.intel.com/*",
         "https://crvle-vporequests.intel.com/*",
         "https://crvle-vporequests.apps1-or-int.icloud.intel.com/*",
         "https://vortexreports.intel.com/*"
