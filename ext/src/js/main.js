@@ -1,7 +1,7 @@
 try {
     window.addEventListener("load", () => {
         try {
-            if (validarContenidoURL("crvle-vporequests")) { mainQueueIC(); return; }
+            if (validarContenidoURL("crvle")) { mainQueueIC(); return; }
 
             if (validarContenidoURL("RunCardFilter")) { mainFormRC(); return; }
 
