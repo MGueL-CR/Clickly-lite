@@ -49,10 +49,11 @@ function establecerFunciones(pTablas) {
 function resaltarTexto(e) {
     const regExp = e.target.value.length > 2 ? new RegExp(`(${e.target.value})`, 'gi') : undefined;
     for (const fila of obtenerFilas('MainContent_ReturnsDivGridView')) {
-        if (obtenerHijo(fila, 0).textContent !== 'Lot') {
-            obtenerHijo(fila, 0).innerHTML = obtenerHijo(fila, 0).textContent.replace(regExp, '<mark>$1</mark>');
-            if (obtenerHijo(fila, 0).innerHTML.includes('mark')) {
-                fila.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+        const col01 = obtenerHijo(fila, 0);
+        if (col01.textContent !== 'Lot') {
+            col01.innerHTML = col01.textContent.replace(regExp, '<mark>$1</mark>');
+            if (col01.innerHTML.includes('mark')) {
+                setTimeout(() => { col01.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' }) }, 1000);
             }
         }
     }
@@ -63,7 +64,6 @@ function aplicarFiltrosCombinados(pTipo, pAsignado) {
         if (obtenerHijo(fila, 0).textContent !== 'Lot') {
             const cumpleTipo = pTipo === 'all' || obtenerHijo(fila, 1).textContent === pTipo;
             const cumpleAsignado = pAsignado === 'all' || obtenerHijo(obtenerHijo(fila, 6), 0).value === pAsignado;
-
             if (cumpleTipo && cumpleAsignado) {
                 removerAtributo(fila, 'hidden', false);
             } else {
@@ -83,6 +83,30 @@ function aplicarFiltroPorAsignado(pFiltro) {
     guardarValorEnSS('porAsignado', pFiltro);
     const porTipo = leerValorEnSS('porTipo') || 'all';
     aplicarFiltrosCombinados(porTipo, pFiltro);
+}
+
+function asignarElementosMarcados() {
+    const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
+    const esteForm = obtenerObjetoPorID('form1');
+    let marcadores = '';
+    const filasMarcadas = filas
+        .filter(fila => fila.dataset.mark)
+        .map((fila) => {
+            const select = obtenerHijo(obtenerHijo(fila, 6), 0);
+            const nameSelect = select.name;
+            marcadores += `${select.name} `;
+            console.log(nameSelect)
+            removerClases(obtenerHijo(fila, 3), 'font-weight-bold');
+        });
+
+    if (filasMarcadas.length > 1) {
+        alert(`Seran asignadas a ${obtenerObjetoPorID('Username_label').textContent}: ${filasMarcadas.length} ordenes.`)
+        esteForm.__EVENTTARGET.type = 'text';
+        esteForm.__EVENTTARGET.value = marcadores.trim().replace(/ /g, ',');
+        console.log(esteForm.__EVENTTARGET.value);
+        console.log(filasMarcadas)
+        esteForm.submit();
+    }
 }
 
 function confirmarCopiado(pCol) {
@@ -153,6 +177,16 @@ function propiedadCabeceraUno(pCol01) {
     nuevoContenedor(pCol01, [dvFiltro]);
 }
 
+function propiedadCabeceraTres(pCol03) {
+    agregarClases(pCol03, 'position-relative,expandir-div');
+    const dvMark = nuevoDIV('dvMark', 'div-group px-1');
+    const btnMark = nuevoBoton('btnMark', 'btn-link hd-item text-dark', 'Auto-asignarme', '#000');
+    btnMark.addEventListener('click', asignarElementosMarcados)
+    nuevoContenedor(btnMark, [nuevoIcono('icoReset', 'bi bi-asterisk')]);
+    nuevoContenedor(dvMark, [btnMark]);
+    nuevoContenedor(pCol03, [dvMark]);
+}
+
 function propiedadCabeceraSeis(pCol06) {
     pCol06.className = 'position-relative expandir-div';
     const dvFiltro = nuevoDIV('dvAssignTo', 'div-group');
@@ -172,7 +206,7 @@ function propiedadCabeceraSiete(pCol07) {
     const dvReset = nuevoDIV('dvReset', 'div-group');
     const lblReset = nuevoLabel('btnReset', '');
     agregarClases(lblReset, 'input-group-text');
-    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar')
+    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar');
     const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
     btnReset.addEventListener('click', () => {
         aplicarFiltrosCombinados('all', 'all');
@@ -203,6 +237,17 @@ function generarListaAsignaciones(pSelect) {
     let lstAsignados = leerValorEnSS('assigned') === null ? "" : leerValorEnSS('assigned');
     lstAsignados += `${(pSelect.options[pSelect.selectedIndex].text)}:${pSelect.value};`;
     guardarValorEnSS('assigned', lstAsignados);
+}
+
+function marcarFilaActual(pCol03) {
+    const fila = obtenerPadre(pCol03);
+    if (fila.dataset.mark) {
+        removerAtributo(fila, 'data-mark');
+    } else {
+        addAtributo(fila, 'data-mark', 'mark');
+    }
+    intercambiarClase(pCol03, 'font-weight-bold');
+    confirmarCopiado(pCol03);
 }
 
 function abrirEnNuevaVentana(pFila) {
@@ -236,6 +281,7 @@ function propiedadesTablaRetorno(pFila) {
     if (validarSelector(obtenerHijo(pFila, 0), 'TH')) {
         propiedadCabeceraCero(obtenerHijo(pFila, 0));
         propiedadCabeceraUno(obtenerHijo(pFila, 1));
+        propiedadCabeceraTres(obtenerHijo(pFila, 3));
         propiedadCabeceraSeis(obtenerHijo(pFila, 6));
         propiedadCabeceraSiete(obtenerHijo(pFila, 7));
     } else {
@@ -246,7 +292,11 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        mostrarMensaje(obtenerHijo(fila, 0));
+        if (e.target !== obtenerHijo(fila, 3)) {
+            mostrarMensaje(obtenerHijo(fila, 0));
+            return;
+        }
+        marcarFilaActual(e.target);
     }
 }
 
@@ -255,20 +305,30 @@ function propiedadesTablaVPO(pFila) {
 
     if (obtenerHijo(pFila, 4).textContent === "Zero Quantity") {
         habilitarEditarColumna(obtenerHijo(pFila, 6));
-        agregarClases(obtenerHijo(pFila, 10), 'copiar-aqui');
-        agregarClases(obtenerHijo(pFila, 11), 'copiar-aqui');
+        propiedadesCeldas(obtenerHijo(pFila, 10), 'copiar');
+        propiedadesCeldas(obtenerHijo(pFila, 11), 'imprimir');
     }
+}
+
+function propiedadesCeldas(pCelda, pTipo) {
+    agregarClases(pCelda, 'copiar-aqui');
+    addAtributo(pCelda, 'data-action', 'dblclick');
+    addAtributo(pCelda, 'data-try', 'false');
+    addAtributo(pCelda, 'data-type', pTipo);
 }
 
 function eventoCopiarTablaVPOs(e) {
     const fila = obtenerPadre(e.target);
     if (obtenerHijo(fila, 4).textContent === "Zero Quantity") {
-        if (e.target == obtenerHijo(fila, 10)) {
-            eventosAdicionalesVPO(fila, 'copiar');
-            return;
-        }
-        if (e.target == obtenerHijo(fila, 11)) {
-            eventosAdicionalesVPO(fila, 'imprimir');
+        if (e.target.dataset.action === 'dblclick') {
+            if (e.target.dataset.try == 'true') {
+                removerClases(obtenerHijo(fila, 6), 'resaltar');
+                eventosAdicionalesVPO(fila, e.target.dataset.type);
+            } else {
+                e.target.dataset.try = 'true';
+                copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
+                agregarClases(obtenerHijo(fila, 6), 'resaltar');
+            }
             return;
         }
     }
