@@ -319,15 +319,18 @@ function propiedadesCeldas(pCelda, pTipo) {
 
 function eventoCopiarTablaVPOs(e) {
     const fila = obtenerPadre(e.target);
+    const col06 = obtenerHijo(fila, 6);
     if (obtenerHijo(fila, 4).textContent === "Zero Quantity") {
         if (e.target.dataset.action === 'dblclick') {
-            if (e.target.dataset.try == 'true') {
-                removerClases(obtenerHijo(fila, 6), 'resaltar');
+            if (col06.textContent === '1') {
+                eventosAdicionalesVPO(fila, e.target.dataset.type);
+            } else if (e.target.dataset.try == 'true') {
+                removerClases(col06, 'resaltar');
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
             } else {
                 e.target.dataset.try = 'true';
                 copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
-                agregarClases(obtenerHijo(fila, 6), 'resaltar');
+                agregarClases(col06, 'resaltar');
             }
             return;
         }
