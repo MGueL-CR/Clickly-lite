@@ -103,6 +103,10 @@ function agregarClases(pObj, pClases) {
     });
 }
 
+function intercambiarClase(pObj, pClase) {
+    pObj.classList.toggle(pClase);
+}
+
 function removerClases(pObj, pClases) {
     pObj.classList.remove(pClases);
 }

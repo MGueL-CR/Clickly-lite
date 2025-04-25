@@ -16,12 +16,17 @@
     cursor: copy;
 }
 
+.resaltar {
+    animation: resaltar 2s infinite;
+}
+
 .editar-aqui:focus {
     outline: none;
     font-weight: bold;
     color: #000;
     background-color: #f5f5f533 !important;
     box-shadow: 0 0 2px #fff inset;
+    animation: none;
 }
 
 .texto-copiado {
@@ -54,7 +59,7 @@
 }
 
 .expandir-div:hover {
-    color: #fff;
+    color: transparent;
 }
 
 .expandir-div:hover .div-group {
@@ -138,6 +143,28 @@
     to {
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+@keyframes resaltar {
+    0% {
+        box-shadow: 0 0 5px 3px #f5f5f599 inset;
+    }
+
+    25% {
+        box-shadow: 0 0 5px 6px #f5f5f5 inset;
+    }
+
+    50% {
+        box-shadow: 0 0 5px 3px #f5f5f599 inset;
+    }
+
+    75% {
+        box-shadow: 0 0 5px 6px #ddd inset;
+    }
+
+    100% {
+        box-shadow: 0 0 5px 3px #f5f5f599 inset;
     }
 }
 
