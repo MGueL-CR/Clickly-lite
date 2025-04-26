@@ -202,14 +202,34 @@ function propiedadCabeceraUno(pCol01) {
     nuevoContenedor(pCol01, [dvFiltro]);
 }
 
-function propiedadCabeceraTres(pCol03) {
-    agregarClases(pCol03, 'position-relative,expandir-div');
+function propiedadCabeceraDos(pCol02) {
+    pCol02.className = 'position-relative expandir-div';
+    const dvReset = nuevoDIV('dvReset', 'div-group');
+    const lblReset = nuevoLabel('btnReset', '');
+    agregarClases(lblReset, 'input-group-text');
+    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
+    const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
+    btnReset.addEventListener('click', () => {
+        aplicarFiltrosCombinados('all', 'all');
+        removerValorEnSS('porTipo');
+        removerValorEnSS('porAsignado');
+        establecerValorPorID('cmbType', 'all');
+        establecerValorPorID('cmbAssignTo', 'all');
+    })
+    nuevoContenedor(lblReset, [nuevoIcono('icoReset', 'bi bi-trash-fill')])
+    nuevoContenedor(btnReset, [spnReset]);
+    nuevoContenedor(dvReset, [lblReset, btnReset]);
+    nuevoContenedor(pCol02, [dvReset]);
+}
+
+function propiedadCabeceraSiete(pCol07) {
+    agregarClases(pCol07, 'position-relative,expandir-div');
     const dvMark = nuevoDIV('dvMark', 'div-group px-1');
     const btnMark = nuevoBoton('btnMark', 'btn-link hd-item text-dark', 'Auto-asignarme', '#000');
     btnMark.addEventListener('click', registrarElementosMarcados)
     nuevoContenedor(btnMark, [nuevoIcono('icoReset', 'bi bi-asterisk')]);
     nuevoContenedor(dvMark, [btnMark]);
-    nuevoContenedor(pCol03, [dvMark]);
+    nuevoContenedor(pCol07, [dvMark]);
 }
 
 function propiedadCabeceraSeis(pCol06) {
@@ -224,26 +244,6 @@ function propiedadCabeceraSeis(pCol06) {
         nuevaOpcion('all', '·:: Todos ::·')]);
     nuevoContenedor(dvFiltro, [lblFiltro, cmbFiltro]);
     nuevoContenedor(pCol06, [dvFiltro]);
-}
-
-function propiedadCabeceraSiete(pCol07) {
-    pCol07.className = 'position-relative expandir-div';
-    const dvReset = nuevoDIV('dvReset', 'div-group');
-    const lblReset = nuevoLabel('btnReset', '');
-    agregarClases(lblReset, 'input-group-text');
-    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar');
-    const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
-    btnReset.addEventListener('click', () => {
-        aplicarFiltrosCombinados('all', 'all');
-        removerValorEnSS('porTipo');
-        removerValorEnSS('porAsignado');
-        establecerValorPorID('cmbType', 'all');
-        establecerValorPorID('cmbAssignTo', 'all');
-    })
-    nuevoContenedor(lblReset, [nuevoIcono('icoReset', 'bi bi-trash-fill')])
-    nuevoContenedor(btnReset, [spnReset]);
-    nuevoContenedor(dvReset, [lblReset, btnReset]);
-    nuevoContenedor(pCol07, [dvReset]);
 }
 
 function completarSelectAssignTo(pLista) {
@@ -264,8 +264,8 @@ function generarListaAsignaciones(pSelect) {
     guardarValorEnSS('assigned', lstAsignados);
 }
 
-function marcarFilaActual(pCol03) {
-    const fila = obtenerPadre(pCol03);
+function marcarFilaActual(pCol01) {
+    const fila = obtenerPadre(pCol01);
     const select = obtenerHijo(obtenerHijo(fila, 6), 0);
     const valOpcion = obtenerHijo(select, 1).value;
     let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
@@ -280,8 +280,8 @@ function marcarFilaActual(pCol03) {
         select.value = valOpcion;
     }
     guardarValorEnSS('intentos', intentos);
-    intercambiarClase(pCol03, 'font-weight-bold');
-    confirmarCopiado(pCol03);
+    intercambiarClase(pCol01, 'font-weight-bold');
+    confirmarCopiado(pCol01);
 }
 
 function abrirEnNuevaVentana(pFila) {
@@ -315,7 +315,7 @@ function propiedadesTablaRetorno(pFila) {
     if (validarSelector(obtenerHijo(pFila, 0), 'TH')) {
         propiedadCabeceraCero(obtenerHijo(pFila, 0));
         propiedadCabeceraUno(obtenerHijo(pFila, 1));
-        propiedadCabeceraTres(obtenerHijo(pFila, 3));
+        propiedadCabeceraDos(obtenerHijo(pFila, 2));
         propiedadCabeceraSeis(obtenerHijo(pFila, 6));
         propiedadCabeceraSiete(obtenerHijo(pFila, 7));
     } else {
@@ -326,7 +326,7 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        if (e.target !== obtenerHijo(fila, 3)) {
+        if (e.target !== obtenerHijo(fila, 1)) {
             mostrarMensaje(obtenerHijo(fila, 0));
             return;
         }
