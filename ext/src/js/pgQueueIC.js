@@ -3,6 +3,7 @@ function mainQueueIC() {
     establecerFunciones(obtenerTablas());
     completarSelectAssignTo(leerValorEnSS('assigned'));
     mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
+    asignarElementosMarcados();
 }
 
 function mantenerFiltros(pTipo, pAsignado) {
@@ -85,27 +86,51 @@ function aplicarFiltroPorAsignado(pFiltro) {
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
 
-function asignarElementosMarcados() {
+function registrarElementosMarcados() {
     const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-    const esteForm = obtenerObjetoPorID('form1');
-    let marcadores = '';
     const filasMarcadas = filas
         .filter(fila => fila.dataset.mark)
-        .map((fila) => {
-            const select = obtenerHijo(obtenerHijo(fila, 6), 0);
-            const nameSelect = select.name;
-            marcadores += `${select.name} `;
-            console.log(nameSelect)
-            removerClases(obtenerHijo(fila, 3), 'font-weight-bold');
-        });
+        .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
+    guardarValorEnSS('index', 0);
+    guardarValorEnSS('items', filasMarcadas.toString());
 
     if (filasMarcadas.length > 1) {
-        alert(`Seran asignadas a ${obtenerObjetoPorID('Username_label').textContent}: ${filasMarcadas.length} ordenes.`)
-        esteForm.__EVENTTARGET.type = 'text';
-        esteForm.__EVENTTARGET.value = marcadores.trim().replace(/ /g, ',');
-        console.log(esteForm.__EVENTTARGET.value);
-        console.log(filasMarcadas)
-        esteForm.submit();
+        alert(`Seran asignadas a ${obtenerTextPorID('Username_label')}: ${filasMarcadas.length} ordenes.`);
+    }
+    asignarElementosMarcados();
+}
+
+function asignarElementosMarcados() {
+    const itemsActuales = leerValorEnSS('items');
+    let valIndex = leerValorEnSS('index') ? parseInt(leerValorEnSS('index')) : 100;
+
+    if (itemsActuales) {
+        const elementos = itemsActuales.split(',');
+        const nvoItem = elementos[valIndex];
+
+        if (valIndex >= elementos.length) {
+            removerValorEnSS('items');
+            removerValorEnSS('index');
+            removerValorEnSS('intentos');
+            return;
+        }
+
+        valIndex++
+        guardarValorEnSS('index', valIndex);
+
+        if (leerValorEnSS(nvoItem)) {
+            const select = obtenerElementosPorName(nvoItem)[0];
+            establecerValorPorID(select.id, select[1].value);
+            establecerValorPorID('__EVENTTARGET', nvoItem);
+            removerValorEnSS(nvoItem);
+            setTimeout(() => {
+                document.form['form1'].submit()
+            }, 0);
+        } else {
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
     }
 }
 
@@ -181,7 +206,7 @@ function propiedadCabeceraTres(pCol03) {
     agregarClases(pCol03, 'position-relative,expandir-div');
     const dvMark = nuevoDIV('dvMark', 'div-group px-1');
     const btnMark = nuevoBoton('btnMark', 'btn-link hd-item text-dark', 'Auto-asignarme', '#000');
-    btnMark.addEventListener('click', asignarElementosMarcados)
+    btnMark.addEventListener('click', registrarElementosMarcados)
     nuevoContenedor(btnMark, [nuevoIcono('icoReset', 'bi bi-asterisk')]);
     nuevoContenedor(dvMark, [btnMark]);
     nuevoContenedor(pCol03, [dvMark]);
@@ -241,11 +266,20 @@ function generarListaAsignaciones(pSelect) {
 
 function marcarFilaActual(pCol03) {
     const fila = obtenerPadre(pCol03);
+    const select = obtenerHijo(obtenerHijo(fila, 6), 0);
+    const valOpcion = obtenerHijo(select, 1).value;
+    let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
     if (fila.dataset.mark) {
+        intentos--;
         removerAtributo(fila, 'data-mark');
+        select.value = 0;
     } else {
+        if (intentos > 5) { return; }
+        intentos++;
         addAtributo(fila, 'data-mark', 'mark');
+        select.value = valOpcion;
     }
+    guardarValorEnSS('intentos', intentos);
     intercambiarClase(pCol03, 'font-weight-bold');
     confirmarCopiado(pCol03);
 }
