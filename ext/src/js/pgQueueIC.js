@@ -124,7 +124,7 @@ function asignarElementosMarcados() {
             establecerValorPorID('__EVENTTARGET', nvoItem);
             removerValorEnSS(nvoItem);
             setTimeout(() => {
-                document.form['form1'].submit()
+                document.forms['form1'].submit();
             }, 0);
         } else {
             setTimeout(() => {
@@ -272,11 +272,13 @@ function marcarFilaActual(pCol01) {
     if (fila.dataset.mark) {
         intentos--;
         removerAtributo(fila, 'data-mark');
+        removerValorEnSS(select.name);
         select.value = 0;
     } else {
         if (intentos > 5) { return; }
         intentos++;
         addAtributo(fila, 'data-mark', 'mark');
+        guardarValorEnSS(select.name, select.name);
         select.value = valOpcion;
     }
     guardarValorEnSS('intentos', intentos);
