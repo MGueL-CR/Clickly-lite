@@ -91,13 +91,9 @@ function registrarElementosMarcados() {
     const filasMarcadas = filas
         .filter(fila => fila.dataset.mark)
         .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
-    guardarValorEnSS('index', 0);
+    guardarValorEnSS('index', 1);
     guardarValorEnSS('items', filasMarcadas.toString());
-
-    if (filasMarcadas.length > 1) {
-        alert(`Seran asignadas a ${obtenerTextPorID('Username_label')}: ${filasMarcadas.length} ordenes.`);
-    }
-    asignarElementosMarcados();
+    obtenerObjetoPorID('form1').submit();
 }
 
 function asignarElementosMarcados() {
@@ -112,6 +108,7 @@ function asignarElementosMarcados() {
             removerValorEnSS('items');
             removerValorEnSS('index');
             removerValorEnSS('intentos');
+            modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
             return;
         }
 
@@ -124,12 +121,8 @@ function asignarElementosMarcados() {
             establecerValorPorID('__EVENTTARGET', nvoItem);
             removerValorEnSS(nvoItem);
             setTimeout(() => {
-                document.forms['form1'].submit();
+                obtenerObjetoPorID('form1').submit();
             }, 0);
-        } else {
-            setTimeout(() => {
-                location.reload();
-            }, 500);
         }
     }
 }
