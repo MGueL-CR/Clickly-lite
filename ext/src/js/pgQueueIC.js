@@ -95,8 +95,7 @@ function registrarElementosMarcados() {
         if (filasMarcadas.length > 1) {
             guardarValorEnSS('index', 1);
             guardarValorEnSS('items', filasMarcadas.toString());
-            //obtenerObjetoPorID('form1').submit();
-            location.reload();
+            obtenerObjetoPorID('form1').submit();
         }
     }
 }
@@ -122,8 +121,7 @@ function asignarElementosMarcados() {
             establecerValorPorID(select.id, select[1].value);
             establecerValorPorID('__EVENTTARGET', nvoItem);
             removerValorEnSS(nvoItem);
-            //obtenerObjetoPorID('form1').submit();
-            location.reload();
+            obtenerObjetoPorID('form1').submit();
         }
     }
 }
