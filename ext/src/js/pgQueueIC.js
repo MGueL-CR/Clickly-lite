@@ -170,6 +170,40 @@ function obtenerIniciales(pUser) {
     return nUser.apellidos.length > 2 ? 'RMD' : iniciales;
 }
 
+function generarBotonAutoAsignar() {
+    const dvGroup = nuevoDIV('dvAMark', 'input-group flex-fill flex-nowrap');
+    const lblInput = nuevoLabel('btnAMark', '');
+    agregarClases(lblInput, 'input-group-text');
+    const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
+    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-item', 'Asignar lineas marcadas', '#000');
+    btnBoton.addEventListener('click', registrarElementosMarcados);
+    nuevoContenedor(lblInput, [nuevoIcono('icoAMark', 'bi bi-asterisk')]);
+    nuevoContenedor(btnBoton, [spnText]);
+    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+    return dvGroup;
+}
+
+function eliminarFiltosActivos() {
+    aplicarFiltrosCombinados('all', 'all');
+    removerValorEnSS('porTipo');
+    removerValorEnSS('porAsignado');
+    establecerValorPorID('cmbType', 'all');
+    establecerValorPorID('cmbAssignTo', 'all');
+}
+
+function generarBotonResetearFiltros() {
+    const dvGroup = nuevoDIV('dvReset', 'input-group flex-fill flex-nowrap');
+    const lblInput = nuevoLabel('btnReset', '');
+    agregarClases(lblInput, 'input-group-text');
+    const spnText = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
+    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-item', 'Borrar filtros activos', '#000');
+    btnBoton.addEventListener('click', eliminarFiltosActivos);
+    nuevoContenedor(lblInput, [nuevoIcono('icoReset', 'bi bi-trash-fill')]);
+    nuevoContenedor(btnBoton, [spnText]);
+    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+    return dvGroup;
+}
+
 function propiedadCabeceraCero(pCol00) {
     agregarClases(pCol00, 'position-relative,expandir-div');
     const dvBuscar = nuevoDIV('dvBuscar', 'div-group');
@@ -203,32 +237,12 @@ function propiedadCabeceraUno(pCol01) {
 
 function propiedadCabeceraDos(pCol02) {
     pCol02.className = 'position-relative expandir-div';
-    const dvReset = nuevoDIV('dvReset', 'div-group');
-    const lblReset = nuevoLabel('btnReset', '');
-    agregarClases(lblReset, 'input-group-text');
-    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
-    const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
-    btnReset.addEventListener('click', () => {
-        aplicarFiltrosCombinados('all', 'all');
-        removerValorEnSS('porTipo');
-        removerValorEnSS('porAsignado');
-        establecerValorPorID('cmbType', 'all');
-        establecerValorPorID('cmbAssignTo', 'all');
-    })
-    nuevoContenedor(lblReset, [nuevoIcono('icoReset', 'bi bi-trash-fill')])
-    nuevoContenedor(btnReset, [spnReset]);
-    nuevoContenedor(dvReset, [lblReset, btnReset]);
-    nuevoContenedor(pCol02, [dvReset]);
-}
+    const dvMain = nuevoDIV('dvGeneral', 'div-group');
+    const btnFiltro = generarBotonResetearFiltros();
+    const btnAsignar = generarBotonAutoAsignar();
 
-function propiedadCabeceraSiete(pCol07) {
-    agregarClases(pCol07, 'position-relative,expandir-div');
-    const dvMark = nuevoDIV('dvMark', 'div-group px-1');
-    const btnMark = nuevoBoton('btnMark', 'btn-link hd-item text-dark', 'Auto-asignarme', '#000');
-    btnMark.addEventListener('click', registrarElementosMarcados)
-    nuevoContenedor(btnMark, [nuevoIcono('icoReset', 'bi bi-asterisk')]);
-    nuevoContenedor(dvMark, [btnMark]);
-    nuevoContenedor(pCol07, [dvMark]);
+    nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
+    nuevoContenedor(pCol02, [dvMain]);
 }
 
 function propiedadCabeceraSeis(pCol06) {
@@ -318,7 +332,6 @@ function propiedadesTablaRetorno(pFila) {
         propiedadCabeceraUno(obtenerHijo(pFila, 1));
         propiedadCabeceraDos(obtenerHijo(pFila, 2));
         propiedadCabeceraSeis(obtenerHijo(pFila, 6));
-        propiedadCabeceraSiete(obtenerHijo(pFila, 7));
     } else {
         generarListaAsignaciones(obtenerHijo(obtenerHijo(pFila, 6), 0));
     }
