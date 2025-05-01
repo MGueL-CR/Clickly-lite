@@ -1,9 +1,9 @@
 function mainQueueIC() {
+    asignarElementosMarcados();
     crearPopoverError();
     establecerFunciones(obtenerTablas());
     completarSelectAssignTo(leerValorEnSS('assigned'));
     mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
-    asignarElementosMarcados();
 }
 
 function mantenerFiltros(pTipo, pAsignado) {
@@ -87,14 +87,18 @@ function aplicarFiltroPorAsignado(pFiltro) {
 }
 
 function registrarElementosMarcados() {
-    const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-    const filasMarcadas = filas
-        .filter(fila => fila.dataset.mark)
-        .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
-    guardarValorEnSS('index', 1);
-    guardarValorEnSS('items', filasMarcadas.toString());
-    //obtenerObjetoPorID('form1').submit();
-    location.reload();
+    if (leerValorEnSS('intentos')) {
+        const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
+        const filasMarcadas = filas
+            .filter(fila => fila.dataset.mark)
+            .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
+        if (filasMarcadas.length > 1) {
+            guardarValorEnSS('index', 1);
+            guardarValorEnSS('items', filasMarcadas.toString());
+            //obtenerObjetoPorID('form1').submit();
+            location.reload();
+        }
+    }
 }
 
 function asignarElementosMarcados() {
@@ -106,10 +110,7 @@ function asignarElementosMarcados() {
         const nvoItem = elementos[valIndex];
 
         if (valIndex >= elementos.length) {
-            removerValorEnSS('items');
-            removerValorEnSS('index');
-            removerValorEnSS('intentos');
-            modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
+            limpiarDatosTemporales();
             return;
         }
 
@@ -121,12 +122,17 @@ function asignarElementosMarcados() {
             establecerValorPorID(select.id, select[1].value);
             establecerValorPorID('__EVENTTARGET', nvoItem);
             removerValorEnSS(nvoItem);
-            setTimeout(() => {
-                //obtenerObjetoPorID('form1').submit();
-                location.reload();
-            }, 0);
+            //obtenerObjetoPorID('form1').submit();
+            location.reload();
         }
     }
+}
+
+function limpiarDatosTemporales() {
+    removerValorEnSS('items');
+    removerValorEnSS('index');
+    removerValorEnSS('intentos');
+    modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
 }
 
 function confirmarCopiado(pCol) {
