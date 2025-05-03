@@ -91,11 +91,12 @@ function registrarElementosMarcados() {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
         const filasMarcadas = filas
             .filter(fila => fila.dataset.mark)
-            .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
+            .map(fila => obtenerHijo(fila, 0).textContent);
         if (filasMarcadas.length > 1) {
             guardarValorEnSS('index', 1);
             guardarValorEnSS('items', filasMarcadas.toString());
-            obtenerObjetoPorID('form1').submit();
+            //obtenerObjetoPorID('form1').submit();
+            location.reload()
         }
     }
 }
@@ -117,11 +118,14 @@ function asignarElementosMarcados() {
         guardarValorEnSS('index', valIndex);
 
         if (leerValorEnSS(nvoItem)) {
-            const select = obtenerElementosPorName(nvoItem)[0];
+            const nvaFila = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'))
+                .filter(iFila => obtenerHijo(iFila, 0).textContent.includes(nvoItem));
+            const select = obtenerHijo(obtenerHijo(nvaFila[0], 6), 0);
             establecerValorPorID(select.id, select[1].value);
-            establecerValorPorID('__EVENTTARGET', nvoItem);
+            establecerValorPorID('__EVENTTARGET', select.name);
             removerValorEnSS(nvoItem);
-            obtenerObjetoPorID('form1').submit();
+            //obtenerObjetoPorID('form1').submit();
+            location.reload()
         }
     }
 }
@@ -281,17 +285,18 @@ function marcarFilaActual(pCol01) {
     const fila = obtenerPadre(pCol01);
     const select = obtenerHijo(obtenerHijo(fila, 6), 0);
     const valOpcion = obtenerHijo(select, 1).value;
+    const valCol00 = obtenerHijo(fila, 0).textContent;
     let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
     if (fila.dataset.mark) {
         intentos--;
         removerAtributo(fila, 'data-mark');
-        removerValorEnSS(select.name);
+        removerValorEnSS(valCol00);
         select.value = 0;
     } else {
         if (intentos > 5) { return; }
         intentos++;
         addAtributo(fila, 'data-mark', 'mark');
-        guardarValorEnSS(select.name, select.name);
+        guardarValorEnSS(valCol00, valCol00);
         select.value = valOpcion;
     }
     guardarValorEnSS('intentos', intentos);
