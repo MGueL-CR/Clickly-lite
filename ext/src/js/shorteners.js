@@ -103,6 +103,10 @@ function agregarClases(pObj, pClases) {
     });
 }
 
+function intercambiarClase(pObj, pClase) {
+    pObj.classList.toggle(pClase);
+}
+
 function removerClases(pObj, pClases) {
     pObj.classList.remove(pClases);
 }
@@ -133,6 +137,10 @@ function obtenerValorPorID(pId) {
     return document.getElementById(pId).value;
 }
 
+function obtenerTextPorID(pId) {
+    return document.getElementById(pId).textContent;
+}
+
 function establecerValorPorID(pId, pValor) {
     document.getElementById(pId).value = pValor;
 }
@@ -144,6 +152,13 @@ function establecerTextoPorId(pId, pTexto) {
 function obtenerFilas(pIdTabla) {
     return obtenerElementosPorTags(obtenerObjetoPorID(pIdTabla), 'tr');
 }
+
+// ElementsByName
+
+function obtenerElementosPorName(pName) {
+    return document.getElementsByName(pName);
+}
+
 
 // ElementsByTagName
 
