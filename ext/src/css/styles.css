@@ -84,6 +84,11 @@
     animation: ocultar 250ms ease;
 }
 
+.expandir-div #dvGeneral {
+    gap: 0.25rem;
+    padding-left: 6px !important;
+}
+
 .expandir-div .div-group {
     position: absolute !important;
     top: 0%;

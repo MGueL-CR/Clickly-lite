@@ -1,4 +1,5 @@
 function mainQueueIC() {
+    asignarElementosMarcados();
     crearPopoverError();
     establecerFunciones(obtenerTablas());
     completarSelectAssignTo(leerValorEnSS('assigned'));
@@ -85,28 +86,51 @@ function aplicarFiltroPorAsignado(pFiltro) {
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
 
-function asignarElementosMarcados() {
-    const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-    const esteForm = obtenerObjetoPorID('form1');
-    let marcadores = '';
-    const filasMarcadas = filas
-        .filter(fila => fila.dataset.mark)
-        .map((fila) => {
-            const select = obtenerHijo(obtenerHijo(fila, 6), 0);
-            const nameSelect = select.name;
-            marcadores += `${select.name} `;
-            console.log(nameSelect)
-            removerClases(obtenerHijo(fila, 3), 'font-weight-bold');
-        });
-
-    if (filasMarcadas.length > 1) {
-        alert(`Seran asignadas a ${obtenerObjetoPorID('Username_label').textContent}: ${filasMarcadas.length} ordenes.`)
-        esteForm.__EVENTTARGET.type = 'text';
-        esteForm.__EVENTTARGET.value = marcadores.trim().replace(/ /g, ',');
-        console.log(esteForm.__EVENTTARGET.value);
-        console.log(filasMarcadas)
-        esteForm.submit();
+function registrarElementosMarcados() {
+    if (leerValorEnSS('intentos')) {
+        const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
+        const filasMarcadas = filas
+            .filter(fila => fila.dataset.mark)
+            .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
+        if (filasMarcadas.length > 1) {
+            guardarValorEnSS('index', 1);
+            guardarValorEnSS('items', filasMarcadas.toString());
+            obtenerObjetoPorID('form1').submit();
+        }
     }
+}
+
+function asignarElementosMarcados() {
+    const itemsActuales = leerValorEnSS('items');
+    let valIndex = leerValorEnSS('index') ? parseInt(leerValorEnSS('index')) : 100;
+
+    if (itemsActuales) {
+        const elementos = itemsActuales.split(',');
+        const nvoItem = elementos[valIndex];
+
+        if (valIndex >= elementos.length) {
+            limpiarDatosTemporales();
+            return;
+        }
+
+        valIndex++
+        guardarValorEnSS('index', valIndex);
+
+        if (leerValorEnSS(nvoItem)) {
+            const select = obtenerElementosPorName(nvoItem)[0];
+            establecerValorPorID(select.id, select[1].value);
+            establecerValorPorID('__EVENTTARGET', nvoItem);
+            removerValorEnSS(nvoItem);
+            obtenerObjetoPorID('form1').submit();
+        }
+    }
+}
+
+function limpiarDatosTemporales() {
+    removerValorEnSS('items');
+    removerValorEnSS('index');
+    removerValorEnSS('intentos');
+    modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
 }
 
 function confirmarCopiado(pCol) {
@@ -146,6 +170,40 @@ function obtenerIniciales(pUser) {
     return nUser.apellidos.length > 2 ? 'RMD' : iniciales;
 }
 
+function generarBotonAutoAsignar() {
+    const dvGroup = nuevoDIV('dvAMark', 'input-group flex-fill flex-nowrap');
+    const lblInput = nuevoLabel('btnAMark', '');
+    agregarClases(lblInput, 'input-group-text');
+    const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
+    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-item', 'Asignar lineas marcadas', '#000');
+    btnBoton.addEventListener('click', registrarElementosMarcados);
+    nuevoContenedor(lblInput, [nuevoIcono('icoAMark', 'bi bi-asterisk')]);
+    nuevoContenedor(btnBoton, [spnText]);
+    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+    return dvGroup;
+}
+
+function eliminarFiltosActivos() {
+    aplicarFiltrosCombinados('all', 'all');
+    removerValorEnSS('porTipo');
+    removerValorEnSS('porAsignado');
+    establecerValorPorID('cmbType', 'all');
+    establecerValorPorID('cmbAssignTo', 'all');
+}
+
+function generarBotonResetearFiltros() {
+    const dvGroup = nuevoDIV('dvReset', 'input-group flex-fill flex-nowrap');
+    const lblInput = nuevoLabel('btnReset', '');
+    agregarClases(lblInput, 'input-group-text');
+    const spnText = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
+    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-item', 'Borrar filtros activos', '#000');
+    btnBoton.addEventListener('click', eliminarFiltosActivos);
+    nuevoContenedor(lblInput, [nuevoIcono('icoReset', 'bi bi-trash-fill')]);
+    nuevoContenedor(btnBoton, [spnText]);
+    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+    return dvGroup;
+}
+
 function propiedadCabeceraCero(pCol00) {
     agregarClases(pCol00, 'position-relative,expandir-div');
     const dvBuscar = nuevoDIV('dvBuscar', 'div-group');
@@ -177,14 +235,14 @@ function propiedadCabeceraUno(pCol01) {
     nuevoContenedor(pCol01, [dvFiltro]);
 }
 
-function propiedadCabeceraTres(pCol03) {
-    agregarClases(pCol03, 'position-relative,expandir-div');
-    const dvMark = nuevoDIV('dvMark', 'div-group px-1');
-    const btnMark = nuevoBoton('btnMark', 'btn-link hd-item text-dark', 'Auto-asignarme', '#000');
-    btnMark.addEventListener('click', asignarElementosMarcados)
-    nuevoContenedor(btnMark, [nuevoIcono('icoReset', 'bi bi-asterisk')]);
-    nuevoContenedor(dvMark, [btnMark]);
-    nuevoContenedor(pCol03, [dvMark]);
+function propiedadCabeceraDos(pCol02) {
+    pCol02.className = 'position-relative expandir-div';
+    const dvMain = nuevoDIV('dvGeneral', 'div-group');
+    const btnFiltro = generarBotonResetearFiltros();
+    const btnAsignar = generarBotonAutoAsignar();
+
+    nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
+    nuevoContenedor(pCol02, [dvMain]);
 }
 
 function propiedadCabeceraSeis(pCol06) {
@@ -199,26 +257,6 @@ function propiedadCabeceraSeis(pCol06) {
         nuevaOpcion('all', '·:: Todos ::·')]);
     nuevoContenedor(dvFiltro, [lblFiltro, cmbFiltro]);
     nuevoContenedor(pCol06, [dvFiltro]);
-}
-
-function propiedadCabeceraSiete(pCol07) {
-    pCol07.className = 'position-relative expandir-div';
-    const dvReset = nuevoDIV('dvReset', 'div-group');
-    const lblReset = nuevoLabel('btnReset', '');
-    agregarClases(lblReset, 'input-group-text');
-    const spnReset = nuevoSpan('spnReset', 'mx-1', 'Borrar');
-    const btnReset = nuevoBoton('btnReset', 'btn-light hd-item', 'Borrar filtros', '#000');
-    btnReset.addEventListener('click', () => {
-        aplicarFiltrosCombinados('all', 'all');
-        removerValorEnSS('porTipo');
-        removerValorEnSS('porAsignado');
-        establecerValorPorID('cmbType', 'all');
-        establecerValorPorID('cmbAssignTo', 'all');
-    })
-    nuevoContenedor(lblReset, [nuevoIcono('icoReset', 'bi bi-trash-fill')])
-    nuevoContenedor(btnReset, [spnReset]);
-    nuevoContenedor(dvReset, [lblReset, btnReset]);
-    nuevoContenedor(pCol07, [dvReset]);
 }
 
 function completarSelectAssignTo(pLista) {
@@ -239,15 +277,26 @@ function generarListaAsignaciones(pSelect) {
     guardarValorEnSS('assigned', lstAsignados);
 }
 
-function marcarFilaActual(pCol03) {
-    const fila = obtenerPadre(pCol03);
+function marcarFilaActual(pCol01) {
+    const fila = obtenerPadre(pCol01);
+    const select = obtenerHijo(obtenerHijo(fila, 6), 0);
+    const valOpcion = obtenerHijo(select, 1).value;
+    let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
     if (fila.dataset.mark) {
+        intentos--;
         removerAtributo(fila, 'data-mark');
+        removerValorEnSS(select.name);
+        select.value = 0;
     } else {
+        if (intentos > 5) { return; }
+        intentos++;
         addAtributo(fila, 'data-mark', 'mark');
+        guardarValorEnSS(select.name, select.name);
+        select.value = valOpcion;
     }
-    intercambiarClase(pCol03, 'font-weight-bold');
-    confirmarCopiado(pCol03);
+    guardarValorEnSS('intentos', intentos);
+    intercambiarClase(pCol01, 'font-weight-bold');
+    confirmarCopiado(pCol01);
 }
 
 function abrirEnNuevaVentana(pFila) {
@@ -281,9 +330,8 @@ function propiedadesTablaRetorno(pFila) {
     if (validarSelector(obtenerHijo(pFila, 0), 'TH')) {
         propiedadCabeceraCero(obtenerHijo(pFila, 0));
         propiedadCabeceraUno(obtenerHijo(pFila, 1));
-        propiedadCabeceraTres(obtenerHijo(pFila, 3));
+        propiedadCabeceraDos(obtenerHijo(pFila, 2));
         propiedadCabeceraSeis(obtenerHijo(pFila, 6));
-        propiedadCabeceraSiete(obtenerHijo(pFila, 7));
     } else {
         generarListaAsignaciones(obtenerHijo(obtenerHijo(pFila, 6), 0));
     }
@@ -292,7 +340,7 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        if (e.target !== obtenerHijo(fila, 3)) {
+        if (e.target !== obtenerHijo(fila, 1)) {
             mostrarMensaje(obtenerHijo(fila, 0));
             return;
         }
