@@ -27,7 +27,7 @@ function obtenerTablas() {
     return {
         'MainContent_AllocatngionsPendingGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
         'MainContent_CorrelationMirDivGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
-        'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs],
+        'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs, eventoEditarColumna],
         'MainContent_MirLocalGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
         'MainContent_RANGridView': [abrirEnNuevaVentana, eventoCopiarTablaRANS],
         'MainContent_ReturnsDivGridView': [propiedadesTablaRetorno, eventoCopiarTablaRetornos],
@@ -42,6 +42,7 @@ function establecerFunciones(pTablas) {
         if (nvaTabla) {
             agregarClases(nvaTabla, 'tbl-hover');
             nvaTabla.addEventListener('dblclick', pTablas[idTabla][1]);
+            nvaTabla.addEventListener('keydown', pTablas[idTabla][2]);
             for (const fila of obtenerFilas(idTabla)) {
                 pTablas[idTabla][0](fila);
             }
@@ -326,9 +327,15 @@ function eventosAdicionalesVPO(pFila, pBoton) {
     }
 }
 
-function habilitarEditarColumna(pCol) {
-    agregarClases(pCol, 'editar-aqui');
-    addAtributo(pCol, 'contenteditable', 'true');
+function habilitarEditarColumna(pCol06) {
+    agregarClases(pCol06, 'editar-aqui');
+    addAtributo(pCol06, 'data-try', 'false');
+    addAtributo(pCol06, 'contenteditable', 'true');
+}
+
+function eventoEditarColumna(e) {
+    if (e.keyCode == 13) { eventosAdicionalesVPO(obtenerPadre(e.target), 'imprimir'); return; }
+    if (!isNaN(e.key)) { e.target.dataset.try = 'true'; }
 }
 
 function propiedadesTablaRetorno(pFila) {
@@ -366,7 +373,6 @@ function propiedadesTablaVPO(pFila) {
 function propiedadesCeldas(pCelda, pTipo) {
     agregarClases(pCelda, 'copiar-aqui');
     addAtributo(pCelda, 'data-action', 'dblclick');
-    addAtributo(pCelda, 'data-try', 'false');
     addAtributo(pCelda, 'data-type', pTipo);
 }
 
@@ -377,11 +383,11 @@ function eventoCopiarTablaVPOs(e) {
         if (e.target.dataset.action === 'dblclick') {
             if (col06.textContent === '1') {
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
-            } else if (e.target.dataset.try == 'true') {
+            } else if (col06.dataset.try == 'true') {
                 removerClases(col06, 'resaltar');
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
             } else {
-                e.target.dataset.try = 'true';
+                col06.dataset.try = 'true';
                 copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
                 agregarClases(col06, 'resaltar');
             }
