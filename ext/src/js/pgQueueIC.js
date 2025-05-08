@@ -281,23 +281,26 @@ function generarListaAsignaciones(pSelect) {
     guardarValorEnSS('assigned', lstAsignados);
 }
 
-function marcarFilaActual(pCol01) {
-    const fila = obtenerPadre(pCol01);
-    const select = obtenerHijo(obtenerHijo(fila, 6), 0);
+function marcarFilaActual(pFila, pCol01) {
+    const col06 = obtenerHijo(pFila, 6);
+    const select = obtenerHijo(col06, 0);
+    const spnSelect2 = obtenerElementoPorClase(col06, 'select2-selection__rendered')[0];
     const valOpcion = obtenerHijo(select, 1).value;
-    const valCol00 = obtenerHijo(fila, 0).textContent;
+    const valCol00 = obtenerHijo(pFila, 0).textContent;
     let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
-    if (fila.dataset.mark) {
+    if (pFila.dataset.mark) {
         intentos--;
-        removerAtributo(fila, 'data-mark');
+        removerAtributo(pFila, 'data-mark');
         removerValorEnSS(valCol00);
-        select.value = 0;
+        establecerValorPorID(select.id, 0);
+        establecerTextoPorId(spnSelect2.id, 'None');
     } else {
         if (intentos > 5) { return; }
         intentos++;
-        addAtributo(fila, 'data-mark', 'mark');
+        addAtributo(pFila, 'data-mark', 'mark');
         guardarValorEnSS(valCol00, valCol00);
-        select.value = valOpcion;
+        establecerValorPorID(select.id, valOpcion);
+        establecerTextoPorId(spnSelect2.id, select.options[select.selectedIndex].text);
     }
     guardarValorEnSS('intentos', intentos);
     intercambiarClase(pCol01, 'font-weight-bold');
@@ -349,7 +352,7 @@ function eventoCopiarTablaRetornos(e) {
             mostrarMensaje(obtenerHijo(fila, 0));
             return;
         }
-        marcarFilaActual(e.target);
+        marcarFilaActual(fila, e.target);
     }
 }
 
