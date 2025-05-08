@@ -1,9 +1,11 @@
 function mainQueueIC() {
-    asignarElementosMarcados();
     crearPopoverError();
-    establecerFunciones(obtenerTablas());
-    completarSelectAssignTo(leerValorEnSS('assigned'));
-    mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
+    asignarElementosMarcados();
+    if (!leerValorEnSS('items')) {
+        establecerFunciones(obtenerTablas());
+        completarSelectAssignTo(leerValorEnSS('assigned'));
+        mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
+    }
 }
 
 function mantenerFiltros(pTipo, pAsignado) {
@@ -110,7 +112,8 @@ function asignarElementosMarcados() {
         const nvoItem = elementos[valIndex];
 
         if (valIndex >= elementos.length) {
-            limpiarDatosTemporales();
+            ['items', 'index', 'intentos'].forEach(i => removerValorEnSS(i));
+            modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
             return;
         }
 
@@ -126,15 +129,9 @@ function asignarElementosMarcados() {
             removerValorEnSS(nvoItem);
             //obtenerObjetoPorID('form1').submit();
             location.reload()
+            console.log(valIndex)
         }
     }
-}
-
-function limpiarDatosTemporales() {
-    removerValorEnSS('items');
-    removerValorEnSS('index');
-    removerValorEnSS('intentos');
-    modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
 }
 
 function confirmarCopiado(pCol) {
