@@ -159,6 +159,11 @@ function obtenerElementosPorName(pName) {
     return document.getElementsByName(pName);
 }
 
+// ElementsByClassName
+
+function obtenerElementoPorClase(pObj, pClase) {
+    return pObj.getElementsByClassName(pClase);
+}
 
 // ElementsByTagName
 

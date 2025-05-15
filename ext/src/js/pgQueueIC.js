@@ -1,9 +1,11 @@
 function mainQueueIC() {
-    asignarElementosMarcados();
     crearPopoverError();
-    establecerFunciones(obtenerTablas());
-    completarSelectAssignTo(leerValorEnSS('assigned'));
-    mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
+    asignarElementosMarcados();
+    if (!leerValorEnSS('items')) {
+        establecerFunciones(obtenerTablas());
+        completarSelectAssignTo(leerValorEnSS('assigned'));
+        mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
+    }
 }
 
 function mantenerFiltros(pTipo, pAsignado) {
@@ -25,7 +27,7 @@ function obtenerTablas() {
     return {
         'MainContent_AllocatngionsPendingGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
         'MainContent_CorrelationMirDivGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
-        'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs],
+        'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs, eventoEditarColumna],
         'MainContent_MirLocalGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
         'MainContent_RANGridView': [abrirEnNuevaVentana, eventoCopiarTablaRANS],
         'MainContent_ReturnsDivGridView': [propiedadesTablaRetorno, eventoCopiarTablaRetornos],
@@ -40,6 +42,7 @@ function establecerFunciones(pTablas) {
         if (nvaTabla) {
             agregarClases(nvaTabla, 'tbl-hover');
             nvaTabla.addEventListener('dblclick', pTablas[idTabla][1]);
+            nvaTabla.addEventListener('keydown', pTablas[idTabla][2]);
             for (const fila of obtenerFilas(idTabla)) {
                 pTablas[idTabla][0](fila);
             }
@@ -91,11 +94,12 @@ function registrarElementosMarcados() {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
         const filasMarcadas = filas
             .filter(fila => fila.dataset.mark)
-            .map((fila) => { return obtenerHijo(obtenerHijo(fila, 6), 0).name; });
+            .map(fila => obtenerHijo(fila, 0).textContent);
         if (filasMarcadas.length > 1) {
             guardarValorEnSS('index', 1);
             guardarValorEnSS('items', filasMarcadas.toString());
-            obtenerObjetoPorID('form1').submit();
+            //obtenerObjetoPorID('form1').submit();
+            location.reload()
         }
     }
 }
@@ -109,7 +113,8 @@ function asignarElementosMarcados() {
         const nvoItem = elementos[valIndex];
 
         if (valIndex >= elementos.length) {
-            limpiarDatosTemporales();
+            ['items', 'index', 'intentos'].forEach(i => removerValorEnSS(i));
+            modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
             return;
         }
 
@@ -117,20 +122,17 @@ function asignarElementosMarcados() {
         guardarValorEnSS('index', valIndex);
 
         if (leerValorEnSS(nvoItem)) {
-            const select = obtenerElementosPorName(nvoItem)[0];
+            const nvaFila = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'))
+                .filter(iFila => obtenerHijo(iFila, 0).textContent.includes(nvoItem));
+            const select = obtenerHijo(obtenerHijo(nvaFila[0], 6), 0);
             establecerValorPorID(select.id, select[1].value);
-            establecerValorPorID('__EVENTTARGET', nvoItem);
+            establecerValorPorID('__EVENTTARGET', select.name);
             removerValorEnSS(nvoItem);
-            obtenerObjetoPorID('form1').submit();
+            //obtenerObjetoPorID('form1').submit();
+            location.reload()
+            console.log(valIndex)
         }
     }
-}
-
-function limpiarDatosTemporales() {
-    removerValorEnSS('items');
-    removerValorEnSS('index');
-    removerValorEnSS('intentos');
-    modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
 }
 
 function confirmarCopiado(pCol) {
@@ -277,22 +279,26 @@ function generarListaAsignaciones(pSelect) {
     guardarValorEnSS('assigned', lstAsignados);
 }
 
-function marcarFilaActual(pCol01) {
-    const fila = obtenerPadre(pCol01);
-    const select = obtenerHijo(obtenerHijo(fila, 6), 0);
+function marcarFilaActual(pFila, pCol01) {
+    const col06 = obtenerHijo(pFila, 6);
+    const select = obtenerHijo(col06, 0);
+    const spnSelect2 = obtenerElementoPorClase(col06, 'select2-selection__rendered')[0];
     const valOpcion = obtenerHijo(select, 1).value;
+    const valCol00 = obtenerHijo(pFila, 0).textContent;
     let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
-    if (fila.dataset.mark) {
+    if (pFila.dataset.mark) {
         intentos--;
-        removerAtributo(fila, 'data-mark');
-        removerValorEnSS(select.name);
-        select.value = 0;
+        removerAtributo(pFila, 'data-mark');
+        removerValorEnSS(valCol00);
+        establecerValorPorID(select.id, 0);
+        establecerTextoPorId(spnSelect2.id, 'None');
     } else {
         if (intentos > 5) { return; }
         intentos++;
-        addAtributo(fila, 'data-mark', 'mark');
-        guardarValorEnSS(select.name, select.name);
-        select.value = valOpcion;
+        addAtributo(pFila, 'data-mark', 'mark');
+        guardarValorEnSS(valCol00, valCol00);
+        establecerValorPorID(select.id, valOpcion);
+        establecerTextoPorId(spnSelect2.id, select.options[select.selectedIndex].text);
     }
     guardarValorEnSS('intentos', intentos);
     intercambiarClase(pCol01, 'font-weight-bold');
@@ -321,9 +327,15 @@ function eventosAdicionalesVPO(pFila, pBoton) {
     }
 }
 
-function habilitarEditarColumna(pCol) {
-    agregarClases(pCol, 'editar-aqui');
-    addAtributo(pCol, 'contenteditable', 'true');
+function habilitarEditarColumna(pCol06) {
+    agregarClases(pCol06, 'editar-aqui');
+    addAtributo(pCol06, 'data-try', 'false');
+    addAtributo(pCol06, 'contenteditable', 'true');
+}
+
+function eventoEditarColumna(e) {
+    if (e.keyCode == 13) { eventosAdicionalesVPO(obtenerPadre(e.target), 'imprimir'); return; }
+    if (!isNaN(e.key)) { e.target.dataset.try = 'true'; }
 }
 
 function propiedadesTablaRetorno(pFila) {
@@ -344,7 +356,7 @@ function eventoCopiarTablaRetornos(e) {
             mostrarMensaje(obtenerHijo(fila, 0));
             return;
         }
-        marcarFilaActual(e.target);
+        marcarFilaActual(fila, e.target);
     }
 }
 
@@ -361,7 +373,6 @@ function propiedadesTablaVPO(pFila) {
 function propiedadesCeldas(pCelda, pTipo) {
     agregarClases(pCelda, 'copiar-aqui');
     addAtributo(pCelda, 'data-action', 'dblclick');
-    addAtributo(pCelda, 'data-try', 'false');
     addAtributo(pCelda, 'data-type', pTipo);
 }
 
@@ -372,11 +383,11 @@ function eventoCopiarTablaVPOs(e) {
         if (e.target.dataset.action === 'dblclick') {
             if (col06.textContent === '1') {
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
-            } else if (e.target.dataset.try == 'true') {
+            } else if (col06.dataset.try == 'true') {
                 removerClases(col06, 'resaltar');
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
             } else {
-                e.target.dataset.try = 'true';
+                col06.dataset.try = 'true';
                 copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
                 agregarClases(col06, 'resaltar');
             }
