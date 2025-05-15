@@ -24,27 +24,27 @@ function mantenerFiltros(pTipo, pAsignado) {
 }
 
 function obtenerTablas() {
-    return {
-        'MainContent_AllocatngionsPendingGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
-        'MainContent_CorrelationMirDivGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
-        'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs, eventoEditarColumna],
-        'MainContent_MirLocalGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
-        'MainContent_RANGridView': [abrirEnNuevaVentana, eventoCopiarTablaRANS],
-        'MainContent_ReturnsDivGridView': [propiedadesTablaRetorno, eventoCopiarTablaRetornos],
-        'MainContent_ShippingGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
-        'MainContent_SourceLotDivGridView': [abrirEnNuevaVentana, eventoCopiarTablaSourceLosts],
-    };
+    return [
+        { 'id': 'MainContent_AllocatngionsPendingGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
+        { 'id': 'MainContent_CorrelationMirDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
+        { 'id': 'MainContent_GridView1', 'propiedad': propiedadesTablaVPO, 'evento': eventoCopiarTablaVPOs, 'evento2': eventoEditarColumna },
+        { 'id': 'MainContent_MirLocalGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
+        { 'id': 'MainContent_RANGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaRANS },
+        { 'id': 'MainContent_ReturnsDivGridView', 'propiedad': propiedadesTablaRetorno, 'evento': eventoCopiarTablaRetornos },
+        { 'id': 'MainContent_ShippingGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
+        { 'id': 'MainContent_SourceLotDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaSourceLosts }
+    ];
 }
 
 function establecerFunciones(pTablas) {
-    for (const idTabla in pTablas) {
-        const nvaTabla = obtenerObjetoPorID(idTabla);
+    for (const iTabla of pTablas) {
+        const nvaTabla = obtenerObjetoPorID(iTabla.id);
         if (nvaTabla) {
             agregarClases(nvaTabla, 'tbl-hover');
-            nvaTabla.addEventListener('dblclick', pTablas[idTabla][1]);
-            nvaTabla.addEventListener('keydown', pTablas[idTabla][2]);
-            for (const fila of obtenerFilas(idTabla)) {
-                pTablas[idTabla][0](fila);
+            nvaTabla.addEventListener('dblclick', iTabla.evento);
+            nvaTabla.addEventListener('keydown', iTabla.evento2);
+            for (const fila of obtenerFilas(iTabla.id)) {
+                iTabla.propiedad(fila);
             }
         }
     }
