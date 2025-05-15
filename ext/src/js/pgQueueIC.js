@@ -25,13 +25,13 @@ function mantenerFiltros(pTipo, pAsignado) {
 
 function obtenerTablas() {
     return {
-        'MainContent_AllocatngionsPendingGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
-        'MainContent_CorrelationMirDivGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
+        'MainContent_AllocatngionsPendingGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
+        'MainContent_CorrelationMirDivGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
         'MainContent_GridView1': [propiedadesTablaVPO, eventoCopiarTablaVPOs, eventoEditarColumna],
-        'MainContent_MirLocalGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
+        'MainContent_MirLocalGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
         'MainContent_RANGridView': [abrirEnNuevaVentana, eventoCopiarTablaRANS],
         'MainContent_ReturnsDivGridView': [propiedadesTablaRetorno, eventoCopiarTablaRetornos],
-        'MainContent_ShippingGridView': [abrirEnNuevaVentana, eventoCopiarOtrasTablas],
+        'MainContent_ShippingGridView': [abrirEnNuevaVentana, eventoDBLClickOtrasTablas],
         'MainContent_SourceLotDivGridView': [abrirEnNuevaVentana, eventoCopiarTablaSourceLosts],
     };
 }
@@ -410,11 +410,29 @@ function eventoCopiarTablaSourceLosts(e) {
     }
 }
 
-function eventoCopiarOtrasTablas(e) {
+function eventoDBLClickOtrasTablas(e) {
     const fila = obtenerPadre(e.target);
     const col01 = obtenerHijo(fila, 0);
-    if (validarSelector(col01, 'TD')) {
-        copiarValor(col01.textContent.split(':')[1].trim());
-        confirmarCopiado(col01);
+    const col13 = obtenerHijo(fila, 13);
+    const numOrden = col01.textContent.split(':')[1].trim();
+    if (e.target === col13) {
+        abrirHojaImpresionOtrasTablas(numOrden);
+    } else {
+        eventoCopiarOtrasTablas(col01, numOrden);
+    }
+}
+
+function eventoCopiarOtrasTablas(pCol01, pNumOrden) {
+    if (validarSelector(pCol01, 'TD')) {
+        copiarValor(pNumOrden);
+        confirmarCopiado(pCol01);
+    }
+}
+
+function abrirHojaImpresionOtrasTablas(pNumOrden) {
+    if (obtenerContenidoPorID('MainContent_saveValue').includes('CorrelationMirDiv')) {
+        abrirNuevoEnlace(`http://mirweb.intel.com/MIR/MIRRequest.aspx?MRNumber=${pNumOrden}&site=CRML&detail=false`, '_blank')
+    } else {
+        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`, '_blank')
     }
 }
