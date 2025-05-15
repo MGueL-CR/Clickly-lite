@@ -98,8 +98,7 @@ function registrarElementosMarcados() {
         if (filasMarcadas.length > 1) {
             guardarValorEnSS('index', 1);
             guardarValorEnSS('items', filasMarcadas.toString());
-            //obtenerObjetoPorID('form1').submit();
-            location.reload()
+            obtenerObjetoPorID('form1').submit();
         }
     }
 }
@@ -128,18 +127,14 @@ function asignarElementosMarcados() {
             establecerValorPorID(select.id, select[1].value);
             establecerValorPorID('__EVENTTARGET', select.name);
             removerValorEnSS(nvoItem);
-            //obtenerObjetoPorID('form1').submit();
-            location.reload()
-            console.log(valIndex)
+            obtenerObjetoPorID('form1').submit();
         }
     }
 }
 
 function confirmarCopiado(pCol) {
     agregarClases(pCol, 'texto-copiado');
-    setTimeout(() => {
-        removerClases(pCol, 'texto-copiado');
-    }, 250);
+    setTimeout(() => { removerClases(pCol, 'texto-copiado') }, 250);
 }
 
 function mostrarMensaje(pCol) {
@@ -148,9 +143,7 @@ function mostrarMensaje(pCol) {
         const vValor = porCopiar.startsWith('M', 0) ? porCopiar.substring(3, porCopiar.length) : porCopiar;
         copiarValor(vValor);
         confirmarCopiado(pCol);
-    } catch (err) {
-        mostrarAlertaError(err);
-    }
+    } catch (err) { mostrarAlertaError(err) }
 }
 
 function genernarComentarioRAN(pRAN, pBOL, pNombre) {
@@ -185,7 +178,7 @@ function generarBotonAutoAsignar() {
     return dvGroup;
 }
 
-function eliminarFiltosActivos() {
+function eliminarFiltrosActivos() {
     aplicarFiltrosCombinados('all', 'all');
     removerValorEnSS('porTipo');
     removerValorEnSS('porAsignado');
@@ -199,7 +192,7 @@ function generarBotonResetearFiltros() {
     agregarClases(lblInput, 'input-group-text');
     const spnText = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
     const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-item', 'Borrar filtros activos', '#000');
-    btnBoton.addEventListener('click', eliminarFiltosActivos);
+    btnBoton.addEventListener('click', eliminarFiltrosActivos);
     nuevoContenedor(lblInput, [nuevoIcono('icoReset', 'bi bi-trash-fill')]);
     nuevoContenedor(btnBoton, [spnText]);
     nuevoContenedor(dvGroup, [lblInput, btnBoton]);
@@ -238,20 +231,19 @@ function propiedadCabeceraUno(pCol01) {
 }
 
 function propiedadCabeceraDos(pCol02) {
-    pCol02.className = 'position-relative expandir-div';
+    agregarClases(pCol02, 'position-relative,expandir-div');
     const dvMain = nuevoDIV('dvGeneral', 'div-group');
     const btnFiltro = generarBotonResetearFiltros();
     const btnAsignar = generarBotonAutoAsignar();
-
     nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
     nuevoContenedor(pCol02, [dvMain]);
 }
 
 function propiedadCabeceraSeis(pCol06) {
-    pCol06.className = 'position-relative expandir-div';
+    agregarClases(pCol06, 'position-relative,expandir-div');
     const dvFiltro = nuevoDIV('dvAssignTo', 'div-group');
     const lblFiltro = nuevoLabel('cmbAssignTo', '');
-    lblFiltro.className = 'input-group-text';
+    agregarClases(lblFiltro, 'input-group-text');
     const cmbFiltro = nuevoCombo('cmbAssignTo', 'form-select hd-item');
     cmbFiltro.addEventListener('change', (e) => { aplicarFiltroPorAsignado(e.target.value); });
     nuevoContenedor(lblFiltro, [nuevoIcono('icoFiltrar', 'bi bi-funnel-fill')]);
