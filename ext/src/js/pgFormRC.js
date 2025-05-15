@@ -11,8 +11,8 @@ function completarFormulario() {
 
         try {
             getVPO.guardarVPO();
-            establecerValorPorID("ContentPlaceHolder1_VpoNumberTextBox", getVPO.numero);
-            establecerValorPorID("ContentPlaceHolder1_UnitsPerBoxTextBox", getVPO.caja);
+            establacerContenidoPorID("ContentPlaceHolder1_VpoNumberTextBox", getVPO.numero);
+            establacerContenidoPorID("ContentPlaceHolder1_UnitsPerBoxTextBox", getVPO.caja);
             obtenerObjetoPorID("ContentPlaceHolder1_DisplayButton").click();
         } catch (err) {
             mostrarAlertaError(err);
