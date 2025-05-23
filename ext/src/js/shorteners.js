@@ -12,7 +12,7 @@ function imprimirError(pErr) {
 
 function mostrarAlertaError(pErr) {
     imprimirError(pErr);
-    document.getElementById('ppMore').textContent = pErr;
+    establacerContenidoPorID('ppMore', pErr);
     document.getElementById('msgError').showPopover();
 }
 
@@ -133,20 +133,18 @@ function obtenerObjetoPorID(pId) {
     return document.getElementById(pId);
 }
 
-function obtenerValorPorID(pId) {
-    return document.getElementById(pId).value;
+function obtenerContenidoPorID(pId) {
+    const elemento = obtenerObjetoPorID(pId);
+    return elemento.type ? elemento.value : elemento.textContent;
 }
 
-function obtenerTextPorID(pId) {
-    return document.getElementById(pId).textContent;
-}
-
-function establecerValorPorID(pId, pValor) {
-    document.getElementById(pId).value = pValor;
-}
-
-function establecerTextoPorId(pId, pTexto) {
-    document.getElementById(pId).textContent = pTexto;
+function establacerContenidoPorID(pId, pContenido) {
+    const elemento = obtenerObjetoPorID(pId);
+    if (elemento.type) {
+        elemento.value = pContenido;
+    } else {
+        elemento.textContent = pContenido;
+    }
 }
 
 function obtenerFilas(pIdTabla) {
@@ -159,6 +157,11 @@ function obtenerElementosPorName(pName) {
     return document.getElementsByName(pName);
 }
 
+// ElementsByClassName
+
+function obtenerElementoPorClase(pObj, pClase) {
+    return pObj.getElementsByClassName(pClase);
+}
 
 // ElementsByTagName
 

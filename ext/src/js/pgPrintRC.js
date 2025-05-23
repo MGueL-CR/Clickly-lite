@@ -12,7 +12,7 @@ function transformarNombre() {
 
         campoTitulo.id = "nombreProducto";
         removerAtributo(campoTitulo, 'align');
-        establecerTextoPorId(campoTitulo.id, '');
+        establacerContenidoPorID(campoTitulo.id, '');
 
         const prt01 = nuevoSpan('nom01', 'nom01', nombreProducto.shift().trim());
         const prt02 = nuevoSpan('nom02', 'nom02', nombreProducto
@@ -35,7 +35,7 @@ function propiedadesTextArea(pInfo) {
         );
         const nvaDescripcion = {
             'original': txtDetalles.value.trim(), 'adicional': pInfo,
-            'usuario': obtenerValorPorID('ConnectedVortexUser').includes('mejias1x'),
+            'usuario': obtenerContenidoPorID('ConnectedVortexUser').includes('mejias1x'),
             'listaLotes': formatoLista(txtDetalles.value.trim().split(';'))
         };
         ["style", "rows", "cols", "heigth", "readonly"].forEach(iAttr => {
