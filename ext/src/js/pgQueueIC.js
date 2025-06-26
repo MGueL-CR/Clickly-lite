@@ -96,9 +96,9 @@ function registrarElementosMarcados() {
             .filter(fila => fila.dataset.mark)
             .map(fila => obtenerHijo(fila, 0).textContent);
         if (filasMarcadas.length > 1) {
-            guardarValorEnSS('index', 1);
+            guardarValorEnSS('index', 0);
             guardarValorEnSS('items', filasMarcadas.toString());
-            obtenerObjetoPorID('form1').submit();
+            recargarPagina();
         }
     }
 }
