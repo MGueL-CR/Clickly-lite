@@ -1,6 +1,6 @@
 function mainQueueIC() {
     crearPopoverError();
-    asignarElementosMarcados();
+    //asignarElementosMarcados();
     if (!leerValorEnSS('items')) {
         establecerFunciones(obtenerTablas());
         completarSelectAssignTo(leerValorEnSS('assigned'));
@@ -88,7 +88,7 @@ function aplicarFiltroPorAsignado(pFiltro) {
     const porTipo = leerValorEnSS('porTipo') || 'all';
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
-
+/*
 function registrarElementosMarcados() {
     if (leerValorEnSS('intentos')) {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
@@ -131,7 +131,7 @@ function asignarElementosMarcados() {
         }
     }
 }
-
+*/
 function confirmarCopiado(pCol) {
     agregarClases(pCol, 'texto-copiado');
     setTimeout(() => { removerClases(pCol, 'texto-copiado') }, 250);
@@ -164,7 +164,7 @@ function obtenerIniciales(pUser) {
     const iniciales = `${nUser.nombres[0][0]}${nUser.apellidos[0][0]}${nUser.apellidos[1][0]}`
     return nUser.apellidos.length > 2 ? 'RMD' : iniciales;
 }
-
+/*
 function generarBotonAutoAsignar() {
     const dvGroup = nuevoDIV('dvAMark', 'input-group flex-fill flex-nowrap');
     const lblInput = nuevoLabel('btnAMark', '');
@@ -177,7 +177,7 @@ function generarBotonAutoAsignar() {
     nuevoContenedor(dvGroup, [lblInput, btnBoton]);
     return dvGroup;
 }
-
+*/
 function eliminarFiltrosActivos() {
     aplicarFiltrosCombinados('all', 'all');
     removerValorEnSS('porTipo');
@@ -234,8 +234,9 @@ function propiedadCabeceraDos(pCol02) {
     agregarClases(pCol02, 'position-relative,expandir-div');
     const dvMain = nuevoDIV('dvGeneral', 'div-group');
     const btnFiltro = generarBotonResetearFiltros();
-    const btnAsignar = generarBotonAutoAsignar();
-    nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
+    //const btnAsignar = generarBotonAutoAsignar();
+    //nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
+    nuevoContenedor(dvMain, [btnFiltro]);
     nuevoContenedor(pCol02, [dvMain]);
 }
 
@@ -270,7 +271,7 @@ function generarListaAsignaciones(pSelect) {
     lstAsignados += `${(pSelect.options[pSelect.selectedIndex].text)}:${pSelect.value};`;
     guardarValorEnSS('assigned', lstAsignados);
 }
-
+/*
 function marcarFilaActual(pFila, pCol01) {
     const col06 = obtenerHijo(pFila, 6);
     const select = obtenerHijo(col06, 0);
@@ -296,7 +297,7 @@ function marcarFilaActual(pFila, pCol01) {
     intercambiarClase(pCol01, 'font-weight-bold');
     confirmarCopiado(pCol01);
 }
-
+*/
 function abrirEnNuevaVentana(pFila) {
     const nvaCol = obtenerHijo(pFila, 0);
     if (validarSelector(nvaCol, 'TD')) {
@@ -344,11 +345,9 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        if (e.target !== obtenerHijo(fila, 1)) {
-            mostrarMensaje(obtenerHijo(fila, 0));
-            return;
-        }
-        marcarFilaActual(fila, e.target);
+        //if (e.target !== obtenerHijo(fila, 1)) {
+        mostrarMensaje(obtenerHijo(fila, 0));
+        // return; } marcarFilaActual(fila, e.target);
     }
 }
 
