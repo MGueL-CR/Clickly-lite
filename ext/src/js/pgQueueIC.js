@@ -399,7 +399,6 @@ function eventoCopiarTablaVPOs(e) {
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
             } else {
                 col06.dataset.try = 'true';
-                copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
                 agregarClases(col06, 'resaltar');
             }
             return;
