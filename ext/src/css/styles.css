@@ -144,7 +144,7 @@
 }
 
 .div-group .div-btns:hover {
-    flex: 0 1 60% !important;
+    flex: 1 1 60% !important;
 }
 
 .div-group .div-btns .hd-button {
@@ -163,6 +163,11 @@
 .div-group .div-btns .hd-button:hover span {
     opacity: 1;
     position: relative;
+}
+
+.div-group .div-btns .hd-button:hover i {
+    opacity: 0;
+    position: absolute;
 }
 
 @keyframes aparecer {

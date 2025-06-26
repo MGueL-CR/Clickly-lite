@@ -92,12 +92,12 @@ function aplicarFiltroPorAsignado(pFiltro) {
 function registrarElementosMarcados() {
     if (leerValorEnSS('intentos')) {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-        const filasMarcadas = filas
+        const filasFiltradas = filas
             .filter(fila => fila.dataset.mark)
             .map(fila => obtenerHijo(fila, 0).textContent);
-        if (filasMarcadas.length > 1) {
+        if  filasFiltradas.length > 1) {
             guardarValorEnSS('index', 0);
-            guardarValorEnSS('items', filasMarcadas.toString());
+            guardarValorEnSS('items', filasFiltradas.toString());
             recargarPagina();
         }
     }
@@ -166,28 +166,23 @@ function obtenerIniciales(pUser) {
 }
 
 function copiarLotesAsignados() {
-
     const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-    const filasMarcadas = filas
+    const filasFiltradas = filas
         .filter(fila => !fila.getAttribute('hidden'))
         .map(fila => obtenerHijo(fila, 0).textContent);
 
-    const soloText = filasMarcadas.toString().replace(\g\, '\n')
+    filasFiltradas.shift();
 
-    console.log(soloText)
-    /*
-if (filasMarcadas.length > 1) {
-    guardarValorEnSS('index', 0);
-    guardarValorEnSS('items', filasMarcadas.toString());
-    recargarPagina();
-}
-*/
+    if (filasFiltradas.toString().trim() !== '') {
+        const listaLotes = filasFiltradas.toString().replace(/,/g, '\n');
+        copiarValor(listaLotes);
+    }
 }
 
 function generarBotonCopiarLotes() {
     const dvGroup = nuevoDIV('dvCopyLots', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnCopyLots', 'mx-1', 'Copiar lotes');
-    const btnBoton = nuevoBoton('btnCopyLots', 'btn btn-light hd-button', 'Copiar lotes actuales', '#000');
+    const btnBoton = nuevoBoton('btnCopyLots', 'btn btn-light hd-button', 'Copiar lotes filtrados', '#000');
     btnBoton.addEventListener('click', copiarLotesAsignados);
     nuevoContenedor(btnBoton, [nuevoIcono('icoCopyLots', 'bi bi-pencil-fill'), spnText]);
     nuevoContenedor(dvGroup, [btnBoton]);
