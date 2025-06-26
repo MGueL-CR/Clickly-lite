@@ -165,31 +165,46 @@ function obtenerIniciales(pUser) {
     return nUser.apellidos.length > 2 ? 'RMD' : iniciales;
 }
 
+function copiarLotesAsignados() {
+
+    const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
+    const filasMarcadas = filas
+        .filter(fila => !fila.getAttribute('hidden'))
+        .map(fila => obtenerHijo(fila, 0).textContent);
+
+    const soloText = filasMarcadas.toString().replace(\g\, '\n')
+
+    console.log(soloText)
+    /*
+if (filasMarcadas.length > 1) {
+    guardarValorEnSS('index', 0);
+    guardarValorEnSS('items', filasMarcadas.toString());
+    recargarPagina();
+}
+*/
+}
+
 function generarBotonCopiarLotes() {
-    const dvGroup = nuevoDIV('dvCopyLots', 'input-group flex-fill flex-nowrap');
+    const dvGroup = nuevoDIV('dvCopyLots', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnCopyLots', 'mx-1', 'Copiar lotes');
-    const btnBoton = nuevoBoton('btnCopyLots', 'btn btn-light hd-item', 'Copiar lotes actuales', '#000');
-    //btnBoton.addEventListener('click', eliminarFiltrosActivos);
+    const btnBoton = nuevoBoton('btnCopyLots', 'btn btn-light hd-button', 'Copiar lotes actuales', '#000');
+    btnBoton.addEventListener('click', copiarLotesAsignados);
     nuevoContenedor(btnBoton, [nuevoIcono('icoCopyLots', 'bi bi-pencil-fill'), spnText]);
     nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
 
-// /*
+/*
 function generarBotonAutoAsignar() {
-    const dvGroup = nuevoDIV('dvAMark', 'input-group flex-fill flex-nowrap');
-    //const lblInput = nuevoLabel('btnAMark', '');
-    //agregarClases(lblInput, 'input-group-text');
+    const dvGroup = nuevoDIV('dvAMark', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
-    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-item', 'Asignar lineas marcadas', '#000');
+    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-button', 'Asignar lineas marcadas', '#000');
     //btnBoton.addEventListener('click', registrarElementosMarcados);
-    //nuevoContenedor(lblInput, [nuevoIcono('icoAMark', 'bi bi-asterisk')]);
     nuevoContenedor(btnBoton, [nuevoIcono('icoAMark', 'bi bi-asterisk'), spnText]);
-    //nuevoContenedor(dvGroup, [lblInput, btnBoton]);
     nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
-// */
+*/
 function eliminarFiltrosActivos() {
     aplicarFiltrosCombinados('all', 'all');
     removerValorEnSS('porTipo');
@@ -199,15 +214,11 @@ function eliminarFiltrosActivos() {
 }
 
 function generarBotonResetearFiltros() {
-    const dvGroup = nuevoDIV('dvReset', 'input-group flex-fill flex-nowrap');
-    //const lblInput = nuevoLabel('btnReset', '');
-    //agregarClases(lblInput, 'input-group-text');
+    const dvGroup = nuevoDIV('dvReset', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnReset', 'mx-1', 'Sin Filtros');
-    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-item', 'Borrar filtros activos', '#000');
+    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-button', 'Borrar filtros activos', '#000');
     btnBoton.addEventListener('click', eliminarFiltrosActivos);
-    //nuevoContenedor(lblInput, [nuevoIcono('icoReset', 'bi bi-trash-fill')]);
     nuevoContenedor(btnBoton, [nuevoIcono('icoReset', 'bi bi-trash-fill'), spnText]);
-    //nuevoContenedor(dvGroup, [lblInput, btnBoton]);
     nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
@@ -248,9 +259,9 @@ function propiedadCabeceraDos(pCol02) {
     const dvMain = nuevoDIV('dvGeneral', 'div-group');
     const btnCopiar = generarBotonCopiarLotes();
     const btnFiltro = generarBotonResetearFiltros();
-    const btnAsignar = generarBotonAutoAsignar();
-    nuevoContenedor(dvMain, [btnAsignar, btnFiltro, btnCopiar]);
-    //nuevoContenedor(dvMain, [btnFiltro, btnCopiar]);
+    //const btnAsignar = generarBotonAutoAsignar();
+    //nuevoContenedor(dvMain, [btnAsignar, btnFiltro, btnCopiar]);
+    nuevoContenedor(dvMain, [btnCopiar, btnFiltro]);
     nuevoContenedor(pCol02, [dvMain]);
 }
 
