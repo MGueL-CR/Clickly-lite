@@ -13,7 +13,7 @@
 }
 
 .copiar-aqui {
-    cursor: copy;
+    cursor: pointer;
 }
 
 .resaltar {
