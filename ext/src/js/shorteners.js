@@ -37,6 +37,10 @@ function recuperarVPO(pValores) {
 
 // window
 
+function recargarPagina() {
+    location.reload();
+}
+
 function obtenerParametroActual() {
     const vValor = window.location.href.split("?")[1]
     return typeof vValor !== "undefined" ? decodificarValor(vValor) : vValor;
