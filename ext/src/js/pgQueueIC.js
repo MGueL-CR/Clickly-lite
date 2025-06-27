@@ -1,6 +1,6 @@
 function mainQueueIC() {
     crearPopoverError();
-    asignarElementosMarcados();
+    //asignarElementosMarcados();
     if (!leerValorEnSS('items')) {
         establecerFunciones(obtenerTablas());
         completarSelectAssignTo(leerValorEnSS('assigned'));
@@ -88,17 +88,17 @@ function aplicarFiltroPorAsignado(pFiltro) {
     const porTipo = leerValorEnSS('porTipo') || 'all';
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
-
+/*
 function registrarElementosMarcados() {
     if (leerValorEnSS('intentos')) {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
-        const filasMarcadas = filas
+        const filasFiltradas = filas
             .filter(fila => fila.dataset.mark)
             .map(fila => obtenerHijo(fila, 0).textContent);
-        if (filasMarcadas.length > 1) {
-            guardarValorEnSS('index', 1);
-            guardarValorEnSS('items', filasMarcadas.toString());
-            obtenerObjetoPorID('form1').submit();
+        if  filasFiltradas.length > 1) {
+            guardarValorEnSS('index', 0);
+            guardarValorEnSS('items', filasFiltradas.toString());
+            recargarPagina();
         }
     }
 }
@@ -131,7 +131,7 @@ function asignarElementosMarcados() {
         }
     }
 }
-
+*/
 function confirmarCopiado(pCol) {
     agregarClases(pCol, 'texto-copiado');
     setTimeout(() => { removerClases(pCol, 'texto-copiado') }, 250);
@@ -165,19 +165,41 @@ function obtenerIniciales(pUser) {
     return nUser.apellidos.length > 2 ? 'RMD' : iniciales;
 }
 
-function generarBotonAutoAsignar() {
-    const dvGroup = nuevoDIV('dvAMark', 'input-group flex-fill flex-nowrap');
-    const lblInput = nuevoLabel('btnAMark', '');
-    agregarClases(lblInput, 'input-group-text');
-    const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
-    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-item', 'Asignar lineas marcadas', '#000');
-    btnBoton.addEventListener('click', registrarElementosMarcados);
-    nuevoContenedor(lblInput, [nuevoIcono('icoAMark', 'bi bi-asterisk')]);
-    nuevoContenedor(btnBoton, [spnText]);
-    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+function copiarLotesAsignados() {
+    const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
+    const filasFiltradas = filas
+        .filter(fila => !fila.getAttribute('hidden'))
+        .map(fila => obtenerHijo(fila, 0).textContent);
+
+    filasFiltradas.shift();
+
+    if (filasFiltradas.toString().trim() !== '') {
+        const listaLotes = filasFiltradas.toString().replace(/,/g, '\n');
+        copiarValor(listaLotes);
+    }
+}
+
+function generarBotonCopiarLotes() {
+    const dvGroup = nuevoDIV('dvCopyLots', 'input-group div-btns flex-nowrap');
+    const spnText = nuevoSpan('spnCopyLots', 'mx-1', 'Copiar lotes');
+    const btnBoton = nuevoBoton('btnCopyLots', 'btn btn-light hd-button', 'Copiar lotes filtrados', '#000');
+    btnBoton.addEventListener('click', copiarLotesAsignados);
+    nuevoContenedor(btnBoton, [nuevoIcono('icoCopyLots', 'bi bi-pencil-fill'), spnText]);
+    nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
 
+/*
+function generarBotonAutoAsignar() {
+    const dvGroup = nuevoDIV('dvAMark', 'input-group div-btns flex-nowrap');
+    const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
+    const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-button', 'Asignar lineas marcadas', '#000');
+    //btnBoton.addEventListener('click', registrarElementosMarcados);
+    nuevoContenedor(btnBoton, [nuevoIcono('icoAMark', 'bi bi-asterisk'), spnText]);
+    nuevoContenedor(dvGroup, [btnBoton]);
+    return dvGroup;
+}
+*/
 function eliminarFiltrosActivos() {
     aplicarFiltrosCombinados('all', 'all');
     removerValorEnSS('porTipo');
@@ -187,15 +209,12 @@ function eliminarFiltrosActivos() {
 }
 
 function generarBotonResetearFiltros() {
-    const dvGroup = nuevoDIV('dvReset', 'input-group flex-fill flex-nowrap');
-    const lblInput = nuevoLabel('btnReset', '');
-    agregarClases(lblInput, 'input-group-text');
-    const spnText = nuevoSpan('spnReset', 'mx-1', 'Borrar Filtros');
-    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-item', 'Borrar filtros activos', '#000');
+    const dvGroup = nuevoDIV('dvReset', 'input-group div-btns flex-nowrap');
+    const spnText = nuevoSpan('spnReset', 'mx-1', 'Sin Filtros');
+    const btnBoton = nuevoBoton('btnReset', 'btn btn-light hd-button', 'Borrar filtros activos', '#000');
     btnBoton.addEventListener('click', eliminarFiltrosActivos);
-    nuevoContenedor(lblInput, [nuevoIcono('icoReset', 'bi bi-trash-fill')]);
-    nuevoContenedor(btnBoton, [spnText]);
-    nuevoContenedor(dvGroup, [lblInput, btnBoton]);
+    nuevoContenedor(btnBoton, [nuevoIcono('icoReset', 'bi bi-trash-fill'), spnText]);
+    nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
 
@@ -233,9 +252,11 @@ function propiedadCabeceraUno(pCol01) {
 function propiedadCabeceraDos(pCol02) {
     agregarClases(pCol02, 'position-relative,expandir-div');
     const dvMain = nuevoDIV('dvGeneral', 'div-group');
+    const btnCopiar = generarBotonCopiarLotes();
     const btnFiltro = generarBotonResetearFiltros();
-    const btnAsignar = generarBotonAutoAsignar();
-    nuevoContenedor(dvMain, [btnAsignar, btnFiltro]);
+    //const btnAsignar = generarBotonAutoAsignar();
+    //nuevoContenedor(dvMain, [btnAsignar, btnFiltro, btnCopiar]);
+    nuevoContenedor(dvMain, [btnCopiar, btnFiltro]);
     nuevoContenedor(pCol02, [dvMain]);
 }
 
@@ -270,7 +291,7 @@ function generarListaAsignaciones(pSelect) {
     lstAsignados += `${(pSelect.options[pSelect.selectedIndex].text)}:${pSelect.value};`;
     guardarValorEnSS('assigned', lstAsignados);
 }
-
+/*
 function marcarFilaActual(pFila, pCol01) {
     const col06 = obtenerHijo(pFila, 6);
     const select = obtenerHijo(col06, 0);
@@ -296,7 +317,7 @@ function marcarFilaActual(pFila, pCol01) {
     intercambiarClase(pCol01, 'font-weight-bold');
     confirmarCopiado(pCol01);
 }
-
+*/
 function abrirEnNuevaVentana(pFila) {
     const nvaCol = obtenerHijo(pFila, 0);
     if (validarSelector(nvaCol, 'TD')) {
@@ -344,11 +365,9 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        if (e.target !== obtenerHijo(fila, 1)) {
-            mostrarMensaje(obtenerHijo(fila, 0));
-            return;
-        }
-        marcarFilaActual(fila, e.target);
+        //if (e.target !== obtenerHijo(fila, 1)) {
+        mostrarMensaje(obtenerHijo(fila, 0));
+        // return; } marcarFilaActual(fila, e.target);
     }
 }
 
@@ -380,7 +399,6 @@ function eventoCopiarTablaVPOs(e) {
                 eventosAdicionalesVPO(fila, e.target.dataset.type);
             } else {
                 col06.dataset.try = 'true';
-                copiarValor('##### CONFIRMAR ###### CANTIDAD #####')
                 agregarClases(col06, 'resaltar');
             }
             return;

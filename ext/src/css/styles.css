@@ -76,11 +76,19 @@
     visibility: visible;
 }
 
+.expandir-div:hover .div-group .div-btns {
+    visibility: visible;
+}
+
 .expandir-div:not(:hover) .div-group label {
     animation: ocultar 250ms ease;
 }
 
 .expandir-div:not(:hover) .div-group .hd-item {
+    animation: ocultar 250ms ease;
+}
+
+.expandir-div:not(:hover) .div-group .div-btns {
     animation: ocultar 250ms ease;
 }
 
@@ -127,6 +135,39 @@
     box-shadow: none !important;
     border: 1px solid #fff !important;
     border-radius: 0 5px 5px 0 !important;
+}
+
+.div-group .div-btns {
+    visibility: hidden;
+    flex: 1 1 40px !important;
+    transition: flex 250ms ease-in-out;
+}
+
+.div-group .div-btns:hover {
+    flex: 1 1 60% !important;
+}
+
+.div-group .div-btns .hd-button {
+    width: 100%;
+    font-family: sans-serif !important;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+
+.div-group .div-btns .hd-button span {
+    opacity: 0;
+    position: absolute;
+    transition: all 250ms;
+}
+
+.div-group .div-btns .hd-button:hover span {
+    opacity: 1;
+    position: relative;
+}
+
+.div-group .div-btns .hd-button:hover i {
+    opacity: 0;
+    position: absolute;
 }
 
 @keyframes aparecer {
