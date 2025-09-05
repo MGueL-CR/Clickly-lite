@@ -451,10 +451,12 @@ function eventoCopiarTablaSourceLosts(e) {
 function eventoDBLClickOtrasTablas(e) {
     const fila = obtenerPadre(e.target);
     const col01 = obtenerHijo(fila, 0);
+    const col11 = obtenerHijo(fila, 11);
     const col13 = obtenerHijo(fila, 13);
     const numOrden = col01.textContent.split(':')[1].trim();
+    const tipoOrden = col11.textContent;
     if (e.target === col13) {
-        abrirHojaImpresionOtrasTablas(numOrden);
+        abrirHojaImpresionOtrasTablas(numOrden, tipoOrden);
     } else {
         eventoCopiarOtrasTablas(col01, numOrden);
     }
@@ -467,10 +469,10 @@ function eventoCopiarOtrasTablas(pCol01, pNumOrden) {
     }
 }
 
-function abrirHojaImpresionOtrasTablas(pNumOrden) {
+function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
     if (obtenerContenidoPorID('MainContent_saveValue').includes('CorrelationMirDiv')) {
         abrirNuevoEnlace(`http://mirweb.intel.com/MIR/MIRRequest.aspx?MRNumber=${pNumOrden}&site=CRML&detail=false`, '_blank')
     } else {
-        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`, '_blank')
+        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${pNumOrden}&type=${ptipoOrden}`, '_blank')
     }
 }
