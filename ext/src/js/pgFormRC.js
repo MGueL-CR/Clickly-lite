@@ -4,7 +4,7 @@ function mainFormRC() {
 }
 
 function completarFormulario() {
-    const getParams = obtenerParametroActual();
+    const getParams = obtenerParametrosURL();
 
     if (typeof getParams !== "undefined") {
         const data = decodificarValor(getParams.get('obj'));

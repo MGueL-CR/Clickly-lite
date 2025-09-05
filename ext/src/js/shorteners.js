@@ -41,17 +41,6 @@ function recargarPagina() {
     location.reload();
 }
 
-function obtenerParametroActual() {
-    let noURL;
-    const vURL = new URL(window.location.href);
-    const vParams = new URLSearchParams(vURL.search);
-    return vParams.size > 0 ? vParams : noURL;
-}
-
-function validarContenidoURL(pValor) {
-    return window.location.href.includes(pValor);
-}
-
 function copiarValor(pValor) {
     navigator.clipboard.writeText(pValor);
 }
@@ -77,8 +66,29 @@ function decodificarValor(pValor) {
     return window.atob(pValor);
 }
 
+// URL
+
+function generarNuevaURL(pURL) {
+    return new URL(pURL);
+}
+
+function obtenerParametrosURL() {
+    let noURL;
+    const vURL = generarNuevaURL(window.location.href);
+    const vParams = new URLSearchParams(vURL.search);
+    return vParams.size > 0 ? vParams : noURL;
+}
+
+function validarContenidoURL(pValor) {
+    return window.location.href.includes(pValor);
+}
+
 function abrirNuevoEnlace(pURL, pModo) {
-    window.open(pURL, pModo);
+    window.open(generarNuevaURL(pURL), pModo);
+}
+
+function agregarParametroURL(pURL, pNombre, pValor) {
+    pURL.searchParams.set(pNombre, pValor);
 }
 
 // DOM
