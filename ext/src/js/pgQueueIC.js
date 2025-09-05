@@ -470,9 +470,11 @@ function eventoCopiarOtrasTablas(pCol01, pNumOrden) {
 }
 
 function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
-    if (obtenerContenidoPorID('MainContent_saveValue').includes('CorrelationMirDiv')) {
+    const tabActive = obtenerContenidoPorID('MainContent_saveValue');
+
+    if (tabActive.includes('CorrelationMirDiv')) {
         abrirNuevoEnlace(`http://mirweb.intel.com/MIR/MIRRequest.aspx?MRNumber=${pNumOrden}&site=CRML&detail=false`, '_blank')
     } else {
-        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${pNumOrden}&type=${ptipoOrden}`, '_blank')
+        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
     }
 }
