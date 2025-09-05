@@ -29,7 +29,7 @@ function obtenerTablas() {
         { 'id': 'MainContent_CorrelationMirDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
         { 'id': 'MainContent_GridView1', 'propiedad': propiedadesTablaVPO, 'evento': eventoCopiarTablaVPOs, 'evento2': eventoEditarColumna },
         { 'id': 'MainContent_MirLocalGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
-        { 'id': 'MainContent_RANGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaRANS },
+        { 'id': 'MainContent_RANGridView', 'propiedad': propiedadesTablaRAN, 'evento': eventoCopiarTablaRANS },
         { 'id': 'MainContent_ReturnsDivGridView', 'propiedad': propiedadesTablaRetorno, 'evento': eventoCopiarTablaRetornos },
         { 'id': 'MainContent_ShippingGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
         { 'id': 'MainContent_SourceLotDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaSourceLosts }
@@ -407,6 +407,25 @@ function eventoCopiarTablaVPOs(e) {
     }
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
         mostrarMensaje(obtenerHijo(fila, 1));
+    }
+}
+
+function propiedadesTablaRAN(pFila) {
+    abrirEnNuevaVentana(pFila);
+    mostrarLocationRAN(pFila);
+}
+
+function mostrarLocationRAN(pFila) {
+    if (validarSelector(obtenerHijo(pFila, 0), "TD")) {
+        const col04 = obtenerHijo(pFila, 4).textContent;
+        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP. INCOMING";
+
+        const col10 = obtenerHijo(pFila, 10);
+        agregarClases(col10, "position-relative,expandir-div");
+
+        const nvoDiv = nuevoDIV(col04, "location");
+        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "XXXXX XXX ??" : location;
+        nuevoContenedor(col10, [nvoDiv]);
     }
 }
 
