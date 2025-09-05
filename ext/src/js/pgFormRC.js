@@ -4,10 +4,11 @@ function mainFormRC() {
 }
 
 function completarFormulario() {
-    const getData = obtenerParametroActual();
+    const getParams = obtenerParametroActual();
 
-    if (typeof getData !== "undefined") {
-        const getVPO = recuperarVPO(getData);
+    if (typeof getParams !== "undefined") {
+        const data = decodificarValor(getParams.get('obj'));
+        const getVPO = recuperarVPO(data);
 
         try {
             getVPO.guardarVPO();

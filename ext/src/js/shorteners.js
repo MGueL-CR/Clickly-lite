@@ -42,8 +42,10 @@ function recargarPagina() {
 }
 
 function obtenerParametroActual() {
-    const vValor = window.location.href.split("?")[1]
-    return typeof vValor !== "undefined" ? decodificarValor(vValor) : vValor;
+    let noURL;
+    const vURL = new URL(window.location.href);
+    const vParams = new URLSearchParams(vURL.search);
+    return vParams.size > 0 ? vParams : noURL;
 }
 
 function validarContenidoURL(pValor) {
