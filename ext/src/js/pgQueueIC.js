@@ -471,10 +471,20 @@ function eventoCopiarOtrasTablas(pCol01, pNumOrden) {
 
 function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
     const tabActive = obtenerContenidoPorID('MainContent_saveValue');
+    let nvaURL;
 
     if (tabActive.includes('CorrelationMirDiv')) {
-        abrirNuevoEnlace(`http://mirweb.intel.com/MIR/MIRRequest.aspx?MRNumber=${pNumOrden}&site=CRML&detail=false`, '_blank')
+        nvaURL = generarNuevaURL("http://mirweb.intel.com/MIR/MIRRequest.aspx");
+        agregarParametroURL(nvaURL, "MRNumber", pNumOrden);
+        agregarParametroURL(nvaURL, "site", "CRML");
+        agregarParametroURL(nvaURL, "detail", "false");
+    } else if (tabActive.includes('ShippingDiv')) {
+        //abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
+        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
+        agregarParametroURL(nvaURL, "id", tabActive);
+        agregarParametroURL(nvaURL, "type", ptipoOrden);
     } else {
-        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
+        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
     }
+    abrirNuevoEnlace(nvaURL, '_blank');
 }
