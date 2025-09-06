@@ -40,7 +40,8 @@
         "https://crvle-request-tool.intel.com/*",
         "https://crvle-vporequests.intel.com/*",
         "https://crvle-vporequests.apps1-or-int.icloud.intel.com/*",
-        "https://vortexreports.intel.com/*"
+        "https://vortexreports.intel.com/*",
+        "https://mms-frontend-prod.app.intel.com/*"
       ]
     }
   ]
