@@ -179,7 +179,8 @@
     display: flex;
     position: absolute;
     inset: 0;
-    color: #212529;
+    color: #fff;
+    font-weight: bolder;
     align-items: center;
     justify-content: center;
     transition: opacity 250ms ease-out;
