@@ -1,6 +1,6 @@
 function mainQueueIC() {
     crearPopoverError();
-    //asignarElementosMarcados();
+    asignarElementosMarcados();
     if (!leerValorEnSS('items')) {
         establecerFunciones(obtenerTablas());
         completarSelectAssignTo(leerValorEnSS('assigned'));
@@ -29,7 +29,7 @@ function obtenerTablas() {
         { 'id': 'MainContent_CorrelationMirDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
         { 'id': 'MainContent_GridView1', 'propiedad': propiedadesTablaVPO, 'evento': eventoCopiarTablaVPOs, 'evento2': eventoEditarColumna },
         { 'id': 'MainContent_MirLocalGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
-        { 'id': 'MainContent_RANGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaRANS },
+        { 'id': 'MainContent_RANGridView', 'propiedad': propiedadesTablaRAN, 'evento': eventoCopiarTablaRANS },
         { 'id': 'MainContent_ReturnsDivGridView', 'propiedad': propiedadesTablaRetorno, 'evento': eventoCopiarTablaRetornos },
         { 'id': 'MainContent_ShippingGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoDBLClickOtrasTablas },
         { 'id': 'MainContent_SourceLotDivGridView', 'propiedad': abrirEnNuevaVentana, 'evento': eventoCopiarTablaSourceLosts }
@@ -88,14 +88,14 @@ function aplicarFiltroPorAsignado(pFiltro) {
     const porTipo = leerValorEnSS('porTipo') || 'all';
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
-/*
+
 function registrarElementosMarcados() {
     if (leerValorEnSS('intentos')) {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
         const filasFiltradas = filas
             .filter(fila => fila.dataset.mark)
             .map(fila => obtenerHijo(fila, 0).textContent);
-        if  filasFiltradas.length > 1) {
+        if (filasFiltradas.length > 1) {
             guardarValorEnSS('index', 0);
             guardarValorEnSS('items', filasFiltradas.toString());
             recargarPagina();
@@ -131,7 +131,7 @@ function asignarElementosMarcados() {
         }
     }
 }
-*/
+
 function confirmarCopiado(pCol) {
     agregarClases(pCol, 'texto-copiado');
     setTimeout(() => { removerClases(pCol, 'texto-copiado') }, 250);
@@ -189,17 +189,17 @@ function generarBotonCopiarLotes() {
     return dvGroup;
 }
 
-/*
+
 function generarBotonAutoAsignar() {
     const dvGroup = nuevoDIV('dvAMark', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
     const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-button', 'Asignar lineas marcadas', '#000');
-    //btnBoton.addEventListener('click', registrarElementosMarcados);
+    btnBoton.addEventListener('click', registrarElementosMarcados);
     nuevoContenedor(btnBoton, [nuevoIcono('icoAMark', 'bi bi-asterisk'), spnText]);
     nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
 }
-*/
+
 function eliminarFiltrosActivos() {
     aplicarFiltrosCombinados('all', 'all');
     removerValorEnSS('porTipo');
@@ -254,9 +254,9 @@ function propiedadCabeceraDos(pCol02) {
     const dvMain = nuevoDIV('dvGeneral', 'div-group');
     const btnCopiar = generarBotonCopiarLotes();
     const btnFiltro = generarBotonResetearFiltros();
-    //const btnAsignar = generarBotonAutoAsignar();
-    //nuevoContenedor(dvMain, [btnAsignar, btnFiltro, btnCopiar]);
-    nuevoContenedor(dvMain, [btnCopiar, btnFiltro]);
+    const btnAsignar = generarBotonAutoAsignar();
+    nuevoContenedor(dvMain, [btnAsignar, btnFiltro, btnCopiar]);
+    //nuevoContenedor(dvMain, [btnCopiar, btnFiltro]);
     nuevoContenedor(pCol02, [dvMain]);
 }
 
@@ -291,7 +291,7 @@ function generarListaAsignaciones(pSelect) {
     lstAsignados += `${(pSelect.options[pSelect.selectedIndex].text)}:${pSelect.value};`;
     guardarValorEnSS('assigned', lstAsignados);
 }
-/*
+
 function marcarFilaActual(pFila, pCol01) {
     const col06 = obtenerHijo(pFila, 6);
     const select = obtenerHijo(col06, 0);
@@ -317,7 +317,7 @@ function marcarFilaActual(pFila, pCol01) {
     intercambiarClase(pCol01, 'font-weight-bold');
     confirmarCopiado(pCol01);
 }
-*/
+
 function abrirEnNuevaVentana(pFila) {
     const nvaCol = obtenerHijo(pFila, 0);
     if (validarSelector(nvaCol, 'TD')) {
@@ -365,9 +365,10 @@ function propiedadesTablaRetorno(pFila) {
 function eventoCopiarTablaRetornos(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD")) {
-        //if (e.target !== obtenerHijo(fila, 1)) {
-        mostrarMensaje(obtenerHijo(fila, 0));
-        // return; } marcarFilaActual(fila, e.target);
+        if (e.target !== obtenerHijo(fila, 1)) {
+            mostrarMensaje(obtenerHijo(fila, 0));
+            return;
+        } marcarFilaActual(fila, e.target);
     }
 }
 
@@ -409,6 +410,25 @@ function eventoCopiarTablaVPOs(e) {
     }
 }
 
+function propiedadesTablaRAN(pFila) {
+    abrirEnNuevaVentana(pFila);
+    mostrarLocationRAN(pFila);
+}
+
+function mostrarLocationRAN(pFila) {
+    if (validarSelector(obtenerHijo(pFila, 0), "TD")) {
+        const col04 = obtenerHijo(pFila, 4).textContent;
+        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP. INCOMING";
+
+        const col10 = obtenerHijo(pFila, 10);
+        agregarClases(col10, "position-relative,expandir-div");
+
+        const nvoDiv = nuevoDIV(col04, "location");
+        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "XXXXX XXX ??" : location;
+        nuevoContenedor(col10, [nvoDiv]);
+    }
+}
+
 function eventoCopiarTablaRANS(e) {
     const fila = obtenerPadre(e.target);
     if (validarSelector(obtenerHijo(fila, 0), "TD") && obtenerHijo(fila, 10).textContent.trim() !== '') {
@@ -431,10 +451,12 @@ function eventoCopiarTablaSourceLosts(e) {
 function eventoDBLClickOtrasTablas(e) {
     const fila = obtenerPadre(e.target);
     const col01 = obtenerHijo(fila, 0);
+    const col11 = obtenerHijo(fila, 11);
     const col13 = obtenerHijo(fila, 13);
     const numOrden = col01.textContent.split(':')[1].trim();
+    const tipoOrden = col11.textContent;
     if (e.target === col13) {
-        abrirHojaImpresionOtrasTablas(numOrden);
+        abrirHojaImpresionOtrasTablas(numOrden, tipoOrden);
     } else {
         eventoCopiarOtrasTablas(col01, numOrden);
     }
@@ -447,10 +469,22 @@ function eventoCopiarOtrasTablas(pCol01, pNumOrden) {
     }
 }
 
-function abrirHojaImpresionOtrasTablas(pNumOrden) {
-    if (obtenerContenidoPorID('MainContent_saveValue').includes('CorrelationMirDiv')) {
-        abrirNuevoEnlace(`http://mirweb.intel.com/MIR/MIRRequest.aspx?MRNumber=${pNumOrden}&site=CRML&detail=false`, '_blank')
+function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
+    const tabActive = obtenerContenidoPorID('MainContent_saveValue');
+    let nvaURL;
+
+    if (tabActive.includes('CorrelationMirDiv')) {
+        nvaURL = generarNuevaURL("http://mirweb.intel.com/MIR/MIRRequest.aspx");
+        agregarParametroURL(nvaURL, "MRNumber", pNumOrden);
+        agregarParametroURL(nvaURL, "site", "CRML");
+        agregarParametroURL(nvaURL, "detail", "false");
+    } else if (tabActive.includes('ShippingDiv')) {
+        //abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
+        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
+        agregarParametroURL(nvaURL, "id", tabActive);
+        agregarParametroURL(nvaURL, "type", ptipoOrden);
     } else {
-        abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`, '_blank')
+        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
     }
+    abrirNuevoEnlace(nvaURL, '_blank');
 }

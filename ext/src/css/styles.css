@@ -62,6 +62,10 @@
     color: transparent;
 }
 
+.expandir-div:hover .location {
+    opacity: 1;
+}
+
 .expandir-div:hover .div-group {
     width: 100%;
     padding-right: 6px !important;
@@ -95,6 +99,18 @@
 .expandir-div #dvGeneral {
     gap: 0.25rem;
     padding-left: 6px !important;
+}
+
+.expandir-div .location {
+    opacity: 0;
+    display: flex;
+    position: absolute;
+    inset: 0;
+    color: #fff;
+    font-weight: bolder;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 500ms ease-out;
 }
 
 .expandir-div .div-group {
