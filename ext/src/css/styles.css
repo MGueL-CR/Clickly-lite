@@ -101,6 +101,18 @@
     padding-left: 6px !important;
 }
 
+.expandir-div .location {
+    opacity: 0;
+    display: flex;
+    position: absolute;
+    inset: 0;
+    color: #fff;
+    font-weight: bolder;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 500ms ease-out;
+}
+
 .expandir-div .div-group {
     position: absolute !important;
     top: 0%;
@@ -172,18 +184,6 @@
 .div-group .div-btns .hd-button:hover i {
     opacity: 0;
     position: absolute;
-}
-
-.location {
-    opacity: 0;
-    display: flex;
-    position: absolute;
-    inset: 0;
-    color: #fff;
-    font-weight: bolder;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 250ms ease-out;
 }
 
 @keyframes aparecer {
