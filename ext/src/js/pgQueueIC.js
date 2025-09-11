@@ -479,10 +479,10 @@ function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
         agregarParametroURL(nvaURL, "site", "CRML");
         agregarParametroURL(nvaURL, "detail", "false");
     } else if (tabActive.includes('ShippingDiv')) {
-        //abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
-        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
+        nvaURL = `https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`;
+        /* nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
         agregarParametroURL(nvaURL, "id", tabActive);
-        agregarParametroURL(nvaURL, "type", ptipoOrden);
+        agregarParametroURL(nvaURL, "type", ptipoOrden);*/
     } else {
         nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
     }
