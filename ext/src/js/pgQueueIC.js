@@ -418,13 +418,13 @@ function propiedadesTablaRAN(pFila) {
 function mostrarLocationRAN(pFila) {
     if (validarSelector(obtenerHijo(pFila, 0), "TD")) {
         const col04 = obtenerHijo(pFila, 4).textContent;
-        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP. INCOMING";
+        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP ENG. INCOMING";
 
         const col10 = obtenerHijo(pFila, 10);
         agregarClases(col10, "position-relative,expandir-div");
 
         const nvoDiv = nuevoDIV(col04, "location");
-        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "XXXXX XXX ??" : location;
+        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "ACTIVE: FACR" : location;
         nuevoContenedor(col10, [nvoDiv]);
     }
 }
