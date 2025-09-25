@@ -9,6 +9,7 @@ function mainViewMRS() {
                 const vNumWWID = obtenerNumeroWWID(mainBody);
                 const vListItems = obtenerListaGeneral(mainBody);
                 const vListProducts = generarListaProductos(vURL, vListItems);
+                console.log(vListProducts);
             }
         } catch (error) { console.error(error); }
     };
@@ -40,8 +41,19 @@ function generarListaProductos(pURL, pList) {
 }
 
 function obtenerProductosPorUnidades(pList) {
-    console.log("Por Unidades");
+    const listUnidades = pList.map((x) => {
+        return { "lot": x[7].textContent.trim(), "part": x[6].textContent.trim(), "qty": parseInt(x[1].textContent.trim()) }
+    });
 
+    const listProductos = Object.values(listUnidades.reduce((lote, unidad) => {
+        if (lote[unidad.lot]) {
+            lote[unidad.lot].qty += unidad.qty;
+        } else {
+            lote[unidad.lot] = { ...unidad };
+        }
+        return lote;
+    }, {}));
+    return listProductos;
 }
 
 function obtenerProductosPorCantidad(pList) {
