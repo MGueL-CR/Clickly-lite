@@ -1,7 +1,6 @@
 function mainViewMRS() {
     const vURL = new URL(window.location);
-    const isShipp = vURL.searchParams.get("id");
-    const vType = vURL.searchParams.get("type");
+    const isShipp = obtenerParametroURL(vURL, "id");
 
     if (isShipp == "ShippingDiv") {
         insertarBotonProspal();
@@ -10,33 +9,42 @@ function mainViewMRS() {
 
 function insertarBotonProspal() {
     const panel = document.getElementById('topSection').querySelectorAll('tr').item(0);
-    const nvoIcono = nuevoIcono("icoProspal", "intelicon-send");
+    const nvoIcono = nuevoIcono("icoProspal", "intelicon-shopping-cart");
     addAtributo(nvoIcono, "_ngcontent-pej-c3", "");
     addAtributo(nvoIcono, "aria-hidden", "true");
     const nvoBoton = nuevoBoton("btnProspal", "btn btn-outline-primary btn-sm button", "Abrir Prospal", "");
     addAtributo(nvoBoton, "_ngcontent-pej-c3", "");
-    nvoBoton.textContent = "Abrir Prospal";
+    nvoBoton.textContent = "Abrir Prospal ";
+    nvoBoton.addEventListener('click', obtenerDatosGenerales, false);
     nuevoContenedor(nvoBoton, [nvoIcono]);
     const columna = crearElemento('td');
     addAtributo(columna, "_ngcontent-pej-c3", "");
     addAtributo(columna, "align", "right");
     nuevoContenedor(columna, [nvoBoton]);
     nuevoContenedor(panel, [columna]);
-
-
-
-    console.log(nvoBoton)
 }
 
 
 function obtenerDatosGenerales() {
     try {
+        const vURL = new URL(window.location);
+        const vType = obtenerParametroURL(vURL, "type");
         const mainBody = document.getElementById("bottomSection");
         const vNumMRS = obtenerNumeroMRS(mainBody);
         const vNumWWID = obtenerNumeroWWID(mainBody);
         const vListItems = obtenerListaGeneral(mainBody);
         const vListProducts = vType == "UNIT" ? obtenerProductosPorUnidades(vListItems) : obtenerProductosPorCantidad(vListItems);
+        abrirEnlaceProspal(vNumMRS, vNumWWID, vListProducts);
     } catch (error) { console.error(error); }
+}
+
+function abrirEnlaceProspal(pNumMRS, pWWID, pListaProductos) {
+    const urlProspal = generarNuevaURL("https://vortexreports.intel.com/Reports/Card/RunCard.aspx");
+    const convertirATexto = JSON.stringify(pListaProductos);
+    agregarParametroURL(urlProspal, "MRS", pNumMRS);
+    agregarParametroURL(urlProspal, "WWID", pWWID);
+    agregarParametroURL(urlProspal, "ITEMS", codificarValor(convertirATexto));
+    abrirNuevoEnlace(urlProspal, "_self")
 }
 
 function obtenerNumeroMRS(pMainContent) {
