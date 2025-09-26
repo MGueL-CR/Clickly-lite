@@ -1,23 +1,35 @@
 function mainViewMRS() {
-    window.onload = () => {
-        try {
-            const vURL = new URL(window.location);
-            const isShipp = vURL.searchParams.get("id");
-            if (isShipp == "ShippingDiv") {
-                const mainBody = document.getElementById("bottomSection");
-                const vNumMRS = obtenerNumeroMRS(mainBody);
-                const vNumWWID = obtenerNumeroWWID(mainBody);
-                const vListItems = obtenerListaGeneral(mainBody);
-                const vListProducts = generarListaProductos(vURL, vListItems);
-                console.log(vListProducts);
-            }
-        } catch (error) { console.error(error); }
-    };
+    const vURL = new URL(window.location);
+    const isShipp = vURL.searchParams.get("id");
+    const vType = vURL.searchParams.get("type");
+
+    if (isShipp == "ShippingDiv") {
+        insertarBotonProspal();
+    }
+}
+
+function insertarBotonProspal() {
+    const panel = document.getElementById('topSection').querySelectorAll('tr').item(0);
+    const columna = document.createElement('td');
+
+
+    console.log(panel)
+}
+
+
+function obtenerDatosGenerales() {
+    try {
+        const mainBody = document.getElementById("bottomSection");
+        const vNumMRS = obtenerNumeroMRS(mainBody);
+        const vNumWWID = obtenerNumeroWWID(mainBody);
+        const vListItems = obtenerListaGeneral(mainBody);
+        const vListProducts = vType == "UNIT" ? obtenerProductosPorUnidades(vListItems) : obtenerProductosPorCantidad(vListItems);
+    } catch (error) { console.error(error); }
 }
 
 function obtenerNumeroMRS(pMainContent) {
     const numMRS = pMainContent.children[0].textContent.split(" ").at(2);
-    return `MRS# ${numMRS}`;
+    return numMRS;
 }
 
 function obtenerNumeroWWID(pMainContent) {
@@ -33,11 +45,6 @@ function obtenerListaGeneral(pMainContent) {
     const rows = Array.from(tableContent.children).filter(x => !x.textContent.includes("#"));
     const listItems = rows.map(x => x.children);
     return listItems;
-}
-
-function generarListaProductos(pURL, pList) {
-    const vType = pURL.searchParams.get("type");
-    return vType == "UNIT" ? obtenerProductosPorUnidades(pList) : obtenerProductosPorCantidad(pList);
 }
 
 function obtenerProductosPorUnidades(pList) {
