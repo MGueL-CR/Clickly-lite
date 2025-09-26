@@ -10,10 +10,22 @@ function mainViewMRS() {
 
 function insertarBotonProspal() {
     const panel = document.getElementById('topSection').querySelectorAll('tr').item(0);
-    const columna = document.createElement('td');
+    const nvoIcono = nuevoIcono("icoProspal", "intelicon-send");
+    addAtributo(nvoIcono, "_ngcontent-pej-c3", "");
+    addAtributo(nvoIcono, "aria-hidden", "true");
+    const nvoBoton = nuevoBoton("btnProspal", "btn btn-outline-primary btn-sm button", "Abrir Prospal", "");
+    addAtributo(nvoBoton, "_ngcontent-pej-c3", "");
+    nvoBoton.textContent = "Abrir Prospal";
+    nuevoContenedor(nvoBoton, [nvoIcono]);
+    const columna = crearElemento('td');
+    addAtributo(columna, "_ngcontent-pej-c3", "");
+    addAtributo(columna, "align", "right");
+    nuevoContenedor(columna, [nvoBoton]);
+    nuevoContenedor(panel, [columna]);
 
 
-    console.log(panel)
+
+    console.log(nvoBoton)
 }
 
 
