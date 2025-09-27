@@ -210,3 +210,7 @@ function obtenerSelectores(pType) {
 function obtenerSelectorPorObjeto(pObj, pType) {
     return pObj.querySelector(pType);
 }
+
+function obtenerSelectoresPorObjeto(pObj, pType) {
+    return pObj.querySelectorAll(pType);
+}

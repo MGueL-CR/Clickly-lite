@@ -7,45 +7,66 @@ function mainViewMRS() {
     }
 }
 
-function insertarBotonProspal() {
-    const panel = document.getElementById('topSection').querySelectorAll('tr').item(0);
-    const nvoIcono = nuevoIcono("icoProspal", "intelicon-shopping-cart");
-    addAtributo(nvoIcono, "_ngcontent-pej-c3", "");
-    addAtributo(nvoIcono, "aria-hidden", "true");
-    const nvoBoton = nuevoBoton("btnProspal", "btn btn-outline-primary btn-sm button", "Abrir Prospal", "");
-    addAtributo(nvoBoton, "_ngcontent-pej-c3", "");
-    nvoBoton.textContent = "Abrir Prospal ";
-    nvoBoton.addEventListener('click', obtenerDatosGenerales, false);
-    nuevoContenedor(nvoBoton, [nvoIcono]);
-    const columna = crearElemento('td');
-    addAtributo(columna, "_ngcontent-pej-c3", "");
-    addAtributo(columna, "align", "right");
-    nuevoContenedor(columna, [nvoBoton]);
-    nuevoContenedor(panel, [columna]);
+function generarIcono() {
+    const tag = nuevoIcono("icoProspal", "intelicon-shopping-cart");
+    addAtributo(tag, "_ngcontent-pej-c3", "");
+    addAtributo(tag, "aria-hidden", "true");
+    return tag;
 }
 
+function generarBoton(pIcono) {
+    const tag = nuevoBoton("btnProspal", "btn btn-outline-primary btn-sm button", "Abrir Prospal", "");
+    addAtributo(tag, "_ngcontent-pej-c3", "");
+    tag.textContent = "Abrir Prospal ";
+    tag.addEventListener('click', obtenerDatosGenerales, false);
+    nuevoContenedor(tag, [pIcono]);
+    return tag;
+}
+
+function generarCelda(pBoton) {
+    const tag = crearElemento('td');
+    addAtributo(tag, "_ngcontent-pej-c3", "");
+    addAtributo(tag, "align", "right");
+    nuevoContenedor(tag, [pBoton]);
+    return tag;
+}
+
+function insertarBotonProspal() {
+    try {
+        const topSection = obtenerObjetoPorID('topSection');
+        const panel = obtenerSelectoresPorObjeto(topSection, 'tr').item(0);
+        const nvoIcono = generarIcono();
+        const nvoBoton = generarBoton(nvoIcono);
+        const nvaCelda = generarCelda(nvoBoton);
+        nuevoContenedor(panel, [nvaCelda]);
+    } catch (error) { console.error(error); }
+}
 
 function obtenerDatosGenerales() {
-    console.clear();
     try {
         const vURL = new URL(window.location);
         const vType = obtenerParametroURL(vURL, "type");
         const mainBody = document.getElementById("bottomSection");
-        const vNumMRS = obtenerNumeroMRS(mainBody);
-        const vNumWWID = obtenerNumeroWWID(mainBody);
         const vListItems = obtenerListaGeneral(mainBody);
-        const vListProducts = vType == "UNIT" ? obtenerProductosPorUnidades(vListItems) : obtenerProductosPorCantidad(vListItems);
-        abrirEnlaceProspal(vNumMRS, vNumWWID, vListProducts);
+        const datosProspal = {
+            "numMRS": obtenerNumeroMRS(mainBody),
+            "numWWID": obtenerNumeroWWID(mainBody),
+            "listItems": vType == "UNIT" ?
+                obtenerProductosPorUnidades(vListItems) :
+                obtenerProductosPorCantidad(vListItems)
+        };
+
+        abrirEnlaceProspal(datosProspal);
     } catch (error) { console.error(error); }
 }
 
-function abrirEnlaceProspal(pNumMRS, pWWID, pListaProductos) {
+function abrirEnlaceProspal(pParams) {
     const urlProspal = generarNuevaURL("https://prospal-prd.app.intel.com/lbManualTraveler");
-    const convertirATexto = JSON.stringify(pListaProductos);
-    agregarParametroURL(urlProspal, "MRS", pNumMRS);
-    agregarParametroURL(urlProspal, "WWID", pWWID);
+    const convertirATexto = JSON.stringify(pParams.listItems);
+    agregarParametroURL(urlProspal, "MRS", pParams.numMRS);
+    agregarParametroURL(urlProspal, "WWID", pParams.numWWID);
     agregarParametroURL(urlProspal, "ITEMS", codificarValor(convertirATexto));
-    //abrirNuevoEnlace(urlProspal, "_self")
+    abrirNuevoEnlace(urlProspal, "_self")
 }
 
 function obtenerNumeroMRS(pMainContent) {
@@ -62,13 +83,12 @@ function obtenerNumeroWWID(pMainContent) {
 function obtenerListaGeneral(pMainContent) {
     const tableContent = pMainContent.querySelectorAll("TABLE").item(2);
     const rows = Array.from(tableContent.rows).slice(1);
-    const listItems = rows.map(x => x.children);
-    return listItems;
+    return rows.map(x => x.children);
 }
 
 function obtenerProductosPorUnidades(pList) {
     const listUnidades = pList.map((x) => {
-        return { "lot": x[7].textContent.trim(), "part": x[6].textContent.trim(), "qty": parseInt(x[1].textContent.trim()) }
+        return { "lot": x.item(7).textContent.trim(), "part": x.item(6).textContent.trim(), "qty": parseInt(x.item(1).textContent.trim()) }
     });
 
     const listProductos = Object.values(listUnidades.reduce((lote, unidad) => {
@@ -84,10 +104,6 @@ function obtenerProductosPorUnidades(pList) {
 
 function obtenerProductosPorCantidad(pList) {
     return pList.map((x) => {
-        return { "lot": x[4].textContent.trim(), "part": x[3].textContent.trim(), "qty": x[1].textContent.trim() }
+        return { "lot": x.item(4).textContent.trim(), "part": x.item(3).textContent.trim(), "qty": parseInt(x.item(1).textContent.trim()) }
     });
 }
-
-
-// ?id=ShippingDiv&type=UNIT
-// ?id=ShippingDiv&type=QUANTITY
