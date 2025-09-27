@@ -26,6 +26,7 @@ function insertarBotonProspal() {
 
 
 function obtenerDatosGenerales() {
+    console.clear();
     try {
         const vURL = new URL(window.location);
         const vType = obtenerParametroURL(vURL, "type");
@@ -39,30 +40,28 @@ function obtenerDatosGenerales() {
 }
 
 function abrirEnlaceProspal(pNumMRS, pWWID, pListaProductos) {
-    const urlProspal = generarNuevaURL("https://vortexreports.intel.com/Reports/Card/RunCard.aspx");
+    const urlProspal = generarNuevaURL("https://prospal-prd.app.intel.com/lbManualTraveler");
     const convertirATexto = JSON.stringify(pListaProductos);
     agregarParametroURL(urlProspal, "MRS", pNumMRS);
     agregarParametroURL(urlProspal, "WWID", pWWID);
     agregarParametroURL(urlProspal, "ITEMS", codificarValor(convertirATexto));
-    abrirNuevoEnlace(urlProspal, "_self")
+    //abrirNuevoEnlace(urlProspal, "_self")
 }
 
 function obtenerNumeroMRS(pMainContent) {
-    const numMRS = pMainContent.children[0].textContent.split(" ").at(2);
-    return numMRS;
+    return pMainContent.children[0].textContent.split(" ").at(2);
 }
 
 function obtenerNumeroWWID(pMainContent) {
-    const tableContent = pMainContent.querySelector("TABLE").children[0];
-    const rows = Array.from(tableContent.children);
+    const tableContent = pMainContent.querySelector("TABLE");
+    const rows = Array.from(tableContent.rows);
     const item = rows.filter(x => x.textContent.includes("WWID"));
-    const numWWID = item.at(0).children[1].textContent.trim();
-    return numWWID;
+    return item.at(0).cells.item(1).textContent.trim();
 }
 
 function obtenerListaGeneral(pMainContent) {
-    const tableContent = pMainContent.querySelectorAll("TABLE")[2].children[0];
-    const rows = Array.from(tableContent.children).filter(x => !x.textContent.includes("#"));
+    const tableContent = pMainContent.querySelectorAll("TABLE").item(2);
+    const rows = Array.from(tableContent.rows).slice(1);
     const listItems = rows.map(x => x.children);
     return listItems;
 }
