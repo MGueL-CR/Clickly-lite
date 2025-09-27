@@ -107,6 +107,7 @@
     position: absolute;
     inset: 0;
     color: #fff;
+    font-size: clamp(0.75rem, 1vw, 1rem);
     font-weight: bolder;
     align-items: center;
     justify-content: center;

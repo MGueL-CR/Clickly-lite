@@ -418,13 +418,13 @@ function propiedadesTablaRAN(pFila) {
 function mostrarLocationRAN(pFila) {
     if (validarSelector(obtenerHijo(pFila, 0), "TD")) {
         const col04 = obtenerHijo(pFila, 4).textContent;
-        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP. INCOMING";
+        const location = isNaN(col04) ? "ACTIVE: RAW" : "ACTIVE: TEMP ENG. INCOMING";
 
         const col10 = obtenerHijo(pFila, 10);
         agregarClases(col10, "position-relative,expandir-div");
 
         const nvoDiv = nuevoDIV(col04, "location");
-        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "XXXXX XXX ??" : location;
+        nvoDiv.textContent = pFila.textContent.includes("Rowell") ? "ACTIVE: FACR" : location;
         nuevoContenedor(col10, [nvoDiv]);
     }
 }
@@ -479,10 +479,10 @@ function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
         agregarParametroURL(nvaURL, "site", "CRML");
         agregarParametroURL(nvaURL, "detail", "false");
     } else if (tabActive.includes('ShippingDiv')) {
-        //abrirNuevoEnlace(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`, '_blank')
-        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
+        nvaURL = `https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}`;
+        /* nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
         agregarParametroURL(nvaURL, "id", tabActive);
-        agregarParametroURL(nvaURL, "type", ptipoOrden);
+        agregarParametroURL(nvaURL, "type", ptipoOrden);*/
     } else {
         nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
     }

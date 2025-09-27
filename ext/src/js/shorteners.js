@@ -91,6 +91,10 @@ function agregarParametroURL(pURL, pNombre, pValor) {
     pURL.searchParams.set(pNombre, pValor);
 }
 
+function obtenerParametroURL(pURL, pNombre) {
+    return pURL.searchParams.get(pNombre);
+}
+
 // DOM
 
 function crearElemento(pType) {
@@ -205,4 +209,8 @@ function obtenerSelectores(pType) {
 
 function obtenerSelectorPorObjeto(pObj, pType) {
     return pObj.querySelector(pType);
+}
+
+function obtenerSelectoresPorObjeto(pObj, pType) {
+    return pObj.querySelectorAll(pType);
 }
