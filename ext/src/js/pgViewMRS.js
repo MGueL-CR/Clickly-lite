@@ -1,10 +1,20 @@
 function mainViewMRS() {
-    const vURL = new URL(window.location);
-    const isShipp = obtenerParametroURL(vURL, "id");
+    const { vId } = leerDatosURL();
 
-    if (isShipp == "ShippingDiv") {
-        insertarBotonProspal();
+    if (vId == "ShippingDiv") {
+        setTimeout(() => {
+            insertarBotonProspal();
+        }, 2000);
     }
+}
+
+function leerDatosURL() {
+    const vURL = obtenerURLActual();
+    const paramsString = vURL.hash.split('?').at(1);
+    const vParms = new URLSearchParams(paramsString);
+    return {
+        "vId": vParms.get("id"), "vType": vParms.get("type"), "vMrs": vParms.get("mrs")
+    };
 }
 
 function generarIcono() {
@@ -44,12 +54,11 @@ function insertarBotonProspal() {
 
 function obtenerDatosGenerales() {
     try {
-        const vURL = new URL(window.location);
-        const vType = obtenerParametroURL(vURL, "type");
+        const { vMrs, vType } = leerDatosURL();
         const mainBody = document.getElementById("bottomSection");
         const vListItems = obtenerListaGeneral(mainBody);
         const datosProspal = {
-            "numMRS": obtenerNumeroMRS(mainBody),
+            "numMRS": vMrs,
             "numWWID": obtenerNumeroWWID(mainBody),
             "listItems": vType == "UNIT" ?
                 obtenerProductosPorUnidades(vListItems) :
@@ -67,10 +76,6 @@ function abrirEnlaceProspal(pParams) {
     agregarParametroURL(urlProspal, "WWID", pParams.numWWID);
     agregarParametroURL(urlProspal, "ITEMS", codificarValor(convertirATexto));
     abrirNuevoEnlace(urlProspal, "_self")
-}
-
-function obtenerNumeroMRS(pMainContent) {
-    return pMainContent.children[0].textContent.split(" ").at(2);
 }
 
 function obtenerNumeroWWID(pMainContent) {
