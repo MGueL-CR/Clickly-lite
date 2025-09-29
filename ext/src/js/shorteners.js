@@ -68,18 +68,27 @@ function decodificarValor(pValor) {
 
 // URL
 
+function obtenerURLActual() {
+    return new URL(window.location.href);
+}
+
 function generarNuevaURL(pURL) {
     return new URL(pURL);
 }
 
 function obtenerParametrosURL() {
     let noURL;
-    const vURL = generarNuevaURL(window.location.href);
+    const vURL = obtenerURLActual();
     const vParams = new URLSearchParams(vURL.search);
     return vParams.size > 0 ? vParams : noURL;
 }
 
+function validarPathname(pPathname) {
+    return obtenerURLActual().pathname.includes(pPathname);
+}
+
 function validarContenidoURL(pValor) {
+    console.log(obtenerURLActual().pathname);
     return window.location.href.includes(pValor);
 }
 
@@ -88,6 +97,10 @@ function abrirNuevoEnlace(pURL, pModo) {
 }
 
 function agregarParametroURL(pURL, pNombre, pValor) {
+    pURL.searchParams.append(pNombre, pValor);
+}
+
+function modificarPropiedadParametroURL(pURL, pNombre, pValor) {
     pURL.searchParams.set(pNombre, pValor);
 }
 
