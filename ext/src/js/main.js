@@ -7,6 +7,10 @@ try {
 
             if (validarContenidoURL("RunCard.aspx")) { mainPrintRC(); return; }
 
+            if (validarContenidoURL("view-printable")) { mainViewMRS(); return; }
+
+            if (validarContenidoURL("prospal")) { mainProspalLMT(); return; }
+
             if (validarContenidoURL("Error.aspx")) {
                 abrirNuevoEnlace('https://vortexreports.intel.com/Index.aspx', '_self');
                 return;

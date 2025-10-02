@@ -5,8 +5,17 @@ class ClassProspal {
     materialCode = "M"
 
     constructor(pMRS, pWWID, pITEMS) {
-        this.numMRS = pMRS;
-        this.userID = pWWID;
-        this.listItems = pITEMS;
+        this.numMRS = pMRS,
+            this.userID = pWWID,
+            this.listItems = pITEMS
+    }
+
+    insertarComentario() {
+        return `MRS# ${this.numMRS}`;
+    }
+
+    obtenerListaMaterial() {
+        const contenido = decodificarValor(this.listItems);
+        return JSON.parse(contenido);
     }
 }
