@@ -474,19 +474,15 @@ function abrirHojaImpresionOtrasTablas(pNumOrden, ptipoOrden) {
     let nvaURL;
 
     if (tabActive.includes('CorrelationMirDiv')) {
-        nvaURL = generarNuevaURL("http://mirweb.intel.com/MIR/MIRRequest.aspx");
-        agregarParametroURL(nvaURL, "MRNumber", pNumOrden);
-        agregarParametroURL(nvaURL, "site", "CRML");
-        agregarParametroURL(nvaURL, "detail", "false");
+        const urlMIR = generarNuevaURL("http://mirweb.intel.com/MIR/MIRRequest.aspx");
+        agregarParametroURL(urlMIR, "MRNumber", pNumOrden);
+        agregarParametroURL(urlMIR, "site", "CRML");
+        agregarParametroURL(urlMIR, "detail", "false");
+        nvaURL = urlMIR.href;
     } else if (tabActive.includes('ShippingDiv')) {
         nvaURL = `https://mms-frontend-prod.app.intel.com/#/view-printable-request/${pNumOrden}/cr?id=${tabActive}&type=${ptipoOrden}&mrs=${pNumOrden}`;
-        /* nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com/#/view-printable-request/${pNumOrden}/cr`);
-        agregarParametroURL(nvaURL, "id", tabActive);
-        agregarParametroURL(nvaURL, "mrs", pNumOrden);
-        agregarParametroURL(nvaURL, "type", ptipoOrden);
-        */
     } else {
-        nvaURL = generarNuevaURL(`https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`);
+        nvaURL = `https://mms-frontend-prod.app.intel.com//#/view-printable-request/${pNumOrden}/cr`;
     }
     abrirNuevoEnlace(nvaURL, '_blank');
 }
