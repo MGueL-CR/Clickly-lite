@@ -7,6 +7,7 @@ function mainProspalLMT() {
                 console.clear();
                 generarClaseProspal();
                 completarFormSuperior();
+                obtenerCamposFormulario();
             }, 3000);
         }
     } catch (error) {
@@ -75,7 +76,7 @@ function completarFormSuperior() {
 
 function obtenerCamposFormulario() {
     const filas = obtenerFilasFormulario();
-    return {
+    vObj.form = {
         "cmbPartType": obtenerCampoTexto(filas.item(14), 0),
         "txtLot": obtenerCampoTexto(filas.item(14), 1),
         "cmbOwner": obtenerCampoLista(filas.item(16), 0),
@@ -86,8 +87,37 @@ function obtenerCamposFormulario() {
     }
 }
 
-function completarFormInferior() {
+function modificarContadorItems(pValor, pTotal) {
+    pValor++;
+    const nvoTexto = `Continuar (${pValor}/${pTotal})`;
+    establacerContenidoPorID('spnCounter', nvoTexto);
+    guardarValorEnSS('indexItem', pValor);
+}
+
+function completarFormInferior(e) {
     const objProspal = vObj.prospal;
     const listaItems = objProspal.obtenerListaMaterial();
-    const form = obtenerCamposFormulario();
+    const form = vObj.form;
+    const vContador = parseInt(leerValorEnSS('indexItem'));
+
+    if (vContador >= listaItems.length) {
+        e.target.textContent = e.target.textContent.replace("Continuar", "Completado")
+        addAtributo(this, "disabled", true);
+        return;
+    }
+
+    const numIndex = vContador ? vContador : 0;
+    const objItem = listaItems.at(numIndex);
+
+    form.txtLot.value = objItem.lot;
+    form.cmbOwner.value = objProspal.owner;
+    form.cmbSiteId.value = objProspal.fabID;
+    form.cmbAssyId.value = objProspal.assyID;
+    form.txtQty.value = objItem.qty;
+    form.txtCommentMRS.textContent = objProspal.insertarComentario();
+    const vPT = objItem.part.split(" ");
+    form.cmbPartType.value = `${vPT.at(0)}${vPT.at(1)}`;
+
+
+    modificarContadorItems(numIndex, listaItems.length);
 }
