@@ -108,16 +108,15 @@ function completarFormInferior(e) {
 
     const numIndex = vContador ? vContador : 0;
     const objItem = listaItems.at(numIndex);
+    const partTypeFormato = objItem.part.split(" ");
 
-    form.txtLot.value = objItem.lot;
-    form.cmbOwner.value = objProspal.owner;
-    form.cmbSiteId.value = objProspal.fabID;
-    form.cmbAssyId.value = objProspal.assyID;
-    form.txtQty.value = objItem.qty;
     form.txtCommentMRS.textContent = objProspal.insertarComentario();
-    const vPT = objItem.part.split(" ");
-    form.cmbPartType.value = `${vPT.at(0)}${vPT.at(1)}`;
-
+    agregarValorAlCampo(form.txtLot, objItem.lot);
+    agregarValorAlCampo(form.cmbOwner, objProspal.owner);
+    agregarValorAlCampo(form.cmbSiteId, objProspal.fabID);
+    agregarValorAlCampo(form.cmbAssyId, objProspal.assyID);
+    agregarValorAlCampo(form.txtQty, objItem.qty);
+    agregarValorAlCampo(form.cmbPartType, `${partTypeFormato.at(0)}${partTypeFormato.at(1)}`); s
 
     modificarContadorItems(numIndex, listaItems.length);
 }
