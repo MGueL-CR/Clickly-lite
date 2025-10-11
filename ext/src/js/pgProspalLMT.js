@@ -53,9 +53,17 @@ function obtenerCampoLista(pFila, pIndex) {
     return obtenerElementosPorTags(pFila, 'select').item(pIndex);
 }
 
+function obtenerCampoSpan(pFila, pIndex) {
+    return obtenerElementoPorClase(pFila, 'k-input').item(pIndex);
+}
+
 function agregarValorAlCampo(pInput, pValor) {
     pInput.focus();
-    pInput.value = pValor;
+    if (pInput.tagName == "INPUT") {
+        pInput.value = pValor;
+    } else {
+        pInput.textContent = pValor;
+    }
 }
 
 function completarFormSuperior() {
@@ -67,10 +75,12 @@ function completarFormSuperior() {
         agregarBotonContinuar();
         const filas = obtenerFilasFormulario();
         const txtMaterialCode = obtenerCampoTexto(filas.item(2), 1);
-        const txtWWID = obtenerCampoTexto(filas.item(3), 0);
+        const txtWWID = obtenerElementosPorName("wwid").item(0);
+        //const txtWWID = obtenerCampoTexto(filas.item(3), 0);
         agregarValorAlCampo(txtMaterialCode, vObj.prospal.materialCode);
         agregarValorAlCampo(txtWWID, vObj.prospal.userID);
-        obtenerCampoTexto(filas.item(3), 1).focus();
+        obtenerObjetoPorID('btnContinuar').focus();
+        //obtenerCampoTexto(filas.item(3), 1).focus();
     }, 2000);
 }
 
@@ -80,8 +90,11 @@ function obtenerCamposFormulario() {
         "cmbPartType": obtenerCampoTexto(filas.item(14), 0),
         "txtLot": obtenerCampoTexto(filas.item(14), 1),
         "cmbOwner": obtenerCampoLista(filas.item(16), 0),
+        "spnOwner": obtenerCampoSpan(filas.item(16), 1),
         "cmbSiteId": obtenerCampoLista(filas.item(17), 0),
+        "spnSiteId": obtenerCampoSpan(filas.item(17), 0),
         "cmbAssyId": obtenerCampoLista(filas.item(18), 0),
+        "spnAssyId": obtenerCampoSpan(filas.item(18), 0),
         "txtQty": obtenerCampoTexto(filas.item(19), 0),
         "txtCommentMRS": obtenerElementosPorTags(filas.item(19), 'textarea').item(0)
     }
@@ -108,15 +121,20 @@ function completarFormInferior(e) {
 
     const numIndex = vContador ? vContador : 0;
     const objItem = listaItems.at(numIndex);
-    const partTypeFormato = objItem.part.split(" ");
+    const arryPartType = objItem.part.split(" ");
+    const nvoPartType = `${arryPartType.at(0)}${arryPartType.at(1)}`;
 
-    form.txtCommentMRS.textContent = objProspal.insertarComentario();
+
     agregarValorAlCampo(form.txtLot, objItem.lot);
     agregarValorAlCampo(form.cmbOwner, objProspal.owner);
+    //agregarValorAlCampo(form.spnOwner, objProspal.owner);
     agregarValorAlCampo(form.cmbSiteId, objProspal.fabID);
+    //agregarValorAlCampo(form.spnSiteId, objProspal.fabID);
     agregarValorAlCampo(form.cmbAssyId, objProspal.assyID);
+    //agregarValorAlCampo(form.spnAssyId, objProspal.assyID);
     agregarValorAlCampo(form.txtQty, objItem.qty);
-    agregarValorAlCampo(form.cmbPartType, `${partTypeFormato.at(0)}${partTypeFormato.at(1)}`); s
+    agregarValorAlCampo(form.txtCommentMRS, objProspal.insertarComentario());
+    agregarValorAlCampo(form.cmbPartType, nvoPartType);
 
     modificarContadorItems(numIndex, listaItems.length);
 }
