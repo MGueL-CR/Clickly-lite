@@ -18,7 +18,7 @@ function mainProspalLMT() {
 function agregarBotonContinuar() {
     const filaBotones = obtenerFilasFormulario().item(13);
     const divBotones = obtenerElementosPorTags(filaBotones, 'div').item(0).firstElementChild;
-    const cantidadItems = vObj.prospal.obtenerListaMaterial().length;
+    const cantidadItems = vObj.prospal.obtenerTotalItems();
 
     const btnContinuar = nuevoBoton('btnContinuar', 'btn btn-info mx-1', 'Completar Campos');
     const spnIcon = nuevoSpan('spnIcono', 'intelicon-play', '');
@@ -76,11 +76,9 @@ function completarFormSuperior() {
         const filas = obtenerFilasFormulario();
         const txtMaterialCode = obtenerCampoTexto(filas.item(2), 1);
         const txtWWID = obtenerElementosPorName("wwid").item(0);
-        //const txtWWID = obtenerCampoTexto(filas.item(3), 0);
         agregarValorAlCampo(txtMaterialCode, vObj.prospal.materialCode);
         agregarValorAlCampo(txtWWID, vObj.prospal.userID);
         obtenerObjetoPorID('btnContinuar').focus();
-        //obtenerCampoTexto(filas.item(3), 1).focus();
     }, 2000);
 }
 
@@ -107,34 +105,53 @@ function modificarContadorItems(pValor, pTotal) {
     guardarValorEnSS('indexItem', pValor);
 }
 
+function generarFormatoPartType(pPartType) {
+    const nvoArray = pPartType.split(" ");
+    let nvoFormato = "";
+
+    if (nvoArray.length > 3) {
+        if (nvoArray.includes("")) {
+            nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)} ${nvoArray.at(4)}`;
+        } else {
+            nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)} ${nvoArray.at(3)}`;
+        }
+    } else {
+        nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)}`;
+    }
+
+    return nvoFormato;
+}
+
 function completarFormInferior(e) {
     const objProspal = vObj.prospal;
-    const listaItems = objProspal.obtenerListaMaterial();
+    const lista = {
+        "items": objProspal.obtenerListaMaterial(), "total": objProspal.obtenerTotalItems()
+    };
     const form = vObj.form;
     const vContador = parseInt(leerValorEnSS('indexItem'));
 
-    if (vContador >= listaItems.length) {
+    if (vContador >= lista.total) {
         e.target.textContent = e.target.textContent.replace("Continuar", "Completado")
-        addAtributo(this, "disabled", true);
+        //addAtributo(this, "disabled", true);
+        this.disable = true;
         return;
     }
 
     const numIndex = vContador ? vContador : 0;
-    const objItem = listaItems.at(numIndex);
-    const arryPartType = objItem.part.split(" ");
-    const nvoPartType = `${arryPartType.at(0)}${arryPartType.at(1)}`;
+    const objItem = lista.items.at(numIndex);
 
+    const nvoFormato = generarFormatoPartType(objItem.part);
 
     agregarValorAlCampo(form.txtLot, objItem.lot);
     agregarValorAlCampo(form.cmbOwner, objProspal.owner);
-    //agregarValorAlCampo(form.spnOwner, objProspal.owner);
+    agregarValorAlCampo(form.spnOwner, objProspal.owner);
     agregarValorAlCampo(form.cmbSiteId, objProspal.fabID);
-    //agregarValorAlCampo(form.spnSiteId, objProspal.fabID);
+    agregarValorAlCampo(form.spnSiteId, objProspal.fabID);
     agregarValorAlCampo(form.cmbAssyId, objProspal.assyID);
-    //agregarValorAlCampo(form.spnAssyId, objProspal.assyID);
+    agregarValorAlCampo(form.spnAssyId, objProspal.assyID);
     agregarValorAlCampo(form.txtQty, objItem.qty);
     agregarValorAlCampo(form.txtCommentMRS, objProspal.insertarComentario());
-    agregarValorAlCampo(form.cmbPartType, nvoPartType);
+    agregarValorAlCampo(form.cmbPartType, nvoFormato);
 
-    modificarContadorItems(numIndex, listaItems.length);
+    //modificarContadorItems(numIndex, lista.total);
 }

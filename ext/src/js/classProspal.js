@@ -2,7 +2,7 @@ class ClassProspal {
     owner = "ENG";
     fabID = "D1D";
     assyID = "A11";
-    materialCode = "M"
+    materialCode = "M";
 
     constructor(pMRS, pWWID, pITEMS) {
         this.numMRS = pMRS,
@@ -17,5 +17,9 @@ class ClassProspal {
     obtenerListaMaterial() {
         const contenido = decodificarValor(this.listItems);
         return JSON.parse(contenido);
+    }
+
+    obtenerTotalItems() {
+        return this.obtenerListaMaterial().length;
     }
 }
