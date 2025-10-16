@@ -8,7 +8,7 @@ function mainProspalLMT() {
                 generarClaseProspal();
                 completarFormSuperior();
                 obtenerCamposFormulario();
-            }, 3000);
+            }, 5000);
         }
     } catch (error) {
         mostrarAlertaError(error);
@@ -18,11 +18,10 @@ function mainProspalLMT() {
 function agregarBotonContinuar() {
     const filaBotones = obtenerFilasFormulario().item(13);
     const divBotones = obtenerElementosPorTags(filaBotones, 'div').item(0).firstElementChild;
-    const cantidadItems = vObj.prospal.obtenerTotalItems();
 
     const btnContinuar = nuevoBoton('btnContinuar', 'btn btn-info mx-1', 'Completar Campos');
     const spnIcon = nuevoSpan('spnIcono', 'intelicon-play', '');
-    const spnCount = nuevoSpan('spnCounter', 'px-1', `Continuar (0/${cantidadItems})`);
+    const spnCount = nuevoSpan('spnCounter', 'px-1', `Continuar (0/${vObj.prospal.obtenerTotalItems()})`);
 
     btnContinuar.addEventListener('click', completarFormInferior);
 
@@ -57,12 +56,24 @@ function obtenerCampoSpan(pFila, pIndex) {
     return obtenerElementoPorClase(pFila, 'k-input').item(pIndex);
 }
 
-function agregarValorAlCampo(pInput, pValor) {
+function agregarValorAlCampo(pInput, pIndex, pValor) {
     pInput.focus();
     if (pInput.tagName == "INPUT") {
-        pInput.value = pValor;
+        pInput.value += pValor[pIndex];
     } else {
-        pInput.textContent = pValor;
+        pInput.textContent += pValor[pIndex];
+    }
+}
+
+function autoRellenarCampos(pInput, pIndex, pValor) {
+    if (pIndex < pValor.length) {
+        agregarValorAlCampo(pInput, pIndex, pValor)
+
+        const eventoInput = new Event("input", { bubbles: true });
+        pInput.dispatchEvent(eventoInput);
+
+        pIndex++;
+        setTimeout(autoRellenarCampos(pInput, pIndex, pValor), 150);
     }
 }
 
@@ -76,10 +87,10 @@ function completarFormSuperior() {
         const filas = obtenerFilasFormulario();
         const txtMaterialCode = obtenerCampoTexto(filas.item(2), 1);
         const txtWWID = obtenerElementosPorName("wwid").item(0);
-        agregarValorAlCampo(txtMaterialCode, vObj.prospal.materialCode);
-        agregarValorAlCampo(txtWWID, vObj.prospal.userID);
+        agregarValorAlCampo(txtMaterialCode, 0, vObj.prospal.materialCode);
+        autoRellenarCampos(txtWWID, 0, vObj.prospal.userID);
         obtenerObjetoPorID('btnContinuar').focus();
-    }, 2000);
+    }, 3000);
 }
 
 function obtenerCamposFormulario() {
@@ -132,26 +143,23 @@ function completarFormInferior(e) {
 
     if (vContador >= lista.total) {
         e.target.textContent = e.target.textContent.replace("Continuar", "Completado")
-        //addAtributo(this, "disabled", true);
-        this.disable = true;
+        this.disabled = true;
         return;
     }
 
     const numIndex = vContador ? vContador : 0;
     const objItem = lista.items.at(numIndex);
 
-    const nvoFormato = generarFormatoPartType(objItem.part);
+    autoRellenarCampos(form.txtLot, 0, objItem.lot);
+    agregarValorAlCampo(form.cmbOwner, 0, objProspal.owner);
+    agregarValorAlCampo(form.spnOwner, 0, objProspal.owner);
+    agregarValorAlCampo(form.cmbSiteId, 0, objProspal.fabID);
+    agregarValorAlCampo(form.spnSiteId, 0, objProspal.fabID);
+    agregarValorAlCampo(form.cmbAssyId, 0, objProspal.assyID);
+    agregarValorAlCampo(form.spnAssyId, 0, objProspal.assyID);
+    autoRellenarCampos(form.txtQty, 0, objItem.qty.toString().padStart(2, "0"));
+    autoRellenarCampos(form.txtCommentMRS, 0, objProspal.insertarComentario());
+    autoRellenarCampos(form.cmbPartType, 0, generarFormatoPartType(objItem.part));
 
-    agregarValorAlCampo(form.txtLot, objItem.lot);
-    agregarValorAlCampo(form.cmbOwner, objProspal.owner);
-    agregarValorAlCampo(form.spnOwner, objProspal.owner);
-    agregarValorAlCampo(form.cmbSiteId, objProspal.fabID);
-    agregarValorAlCampo(form.spnSiteId, objProspal.fabID);
-    agregarValorAlCampo(form.cmbAssyId, objProspal.assyID);
-    agregarValorAlCampo(form.spnAssyId, objProspal.assyID);
-    agregarValorAlCampo(form.txtQty, objItem.qty);
-    agregarValorAlCampo(form.txtCommentMRS, objProspal.insertarComentario());
-    agregarValorAlCampo(form.cmbPartType, nvoFormato);
-
-    //modificarContadorItems(numIndex, lista.total);
+    modificarContadorItems(numIndex, lista.total);
 }
