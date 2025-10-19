@@ -1,29 +1,17 @@
-function getSourceLots(pValue) {
-    if (pValue.includes("INVENTORY")) {
-        return separarLotes(importSourceLots(pValue, "|", "(", ","));
-    } else if (pValue.includes("|")) {
-        return separarLotes(importSourceLots(
-            pValue.slice(pValue.indexOf("|"), pValue.length),
-            "|",
-            "(",
-            ","
-        ));
-    } else {
-        return separarLotes(importSourceLots(pValue, ":", "(", ","));
-    };
+function mostrarListaLotes(pSources) {
+    const listaLotes = pSources.map(item => `\t${item.trim().split(' ').at(0)} ✔\n`);
+    return `\n\nLots:\n${listaLotes.join('')}`;
 }
 
-function importSourceLots(pValue, pIni, pEnd, pSplit) {
-    return pValue.slice(pValue.indexOf(pIni) + 1, pValue.indexOf(pEnd)).split(pSplit);
+function mostrarLotes(pContenido) {
+    const numIni = pContenido.includes('|') ? pContenido.indexOf('|') : pContenido.indexOf(':');
+    const substring1 = pContenido.substring(numIni + 1);
+    const numFin = substring1.indexOf('(') >= 1 ? substring1.indexOf('(') : substring1.length;
+    const substring2 = substring1.substring(0, numFin).split(',').sort();
+    return mostrarListaLotes(substring2);
 }
 
 function formatoLista(pArreglo) {
-    const vSource = pArreglo.filter((x) => x.includes('Source')).toString();
-    return getSourceLots(vSource);
-}
-
-function separarLotes(pSources) {
-    let textoSeparado = "\n\nLots:\n";
-    pSources.map((item) => { textoSeparado += `\t- ${item.trim().split(' ')[0]}\n` });
-    return textoSeparado;
+    const vSource = pArreglo.find(item => item.includes('Source'));
+    return mostrarLotes(vSource);
 }
