@@ -1,11 +1,6 @@
 function mainViewMRS() {
-    const { vId } = leerDatosURL();
-
-    if (vId == "ShippingDiv") {
-        setTimeout(() => {
-            insertarBotonProspal();
-        }, 2000);
-    }
+    crearPopoverError();
+    insertarBotonProspal();
 }
 
 function leerDatosURL() {
@@ -42,14 +37,19 @@ function generarCelda(pBoton) {
 }
 
 function insertarBotonProspal() {
+    const { vId } = leerDatosURL();
     try {
-        const topSection = obtenerObjetoPorID('topSection');
-        const panel = obtenerSelectoresPorObjeto(topSection, 'tr').item(0);
-        const nvoIcono = generarIcono();
-        const nvoBoton = generarBoton(nvoIcono);
-        const nvaCelda = generarCelda(nvoBoton);
-        nuevoContenedor(panel, [nvaCelda]);
-    } catch (error) { console.error(error); }
+        if (vId == "ShippingDiv") {
+            setTimeout(() => {
+                const topSection = obtenerObjetoPorID('topSection');
+                const panel = obtenerSelectoresPorObjeto(topSection, 'tr').item(0);
+                const nvoIcono = generarIcono();
+                const nvoBoton = generarBoton(nvoIcono);
+                const nvaCelda = generarCelda(nvoBoton);
+                nuevoContenedor(panel, [nvaCelda]);
+            }, 2000);
+        }
+    } catch (error) { mostrarAlertaError(error); }
 }
 
 function obtenerDatosGenerales() {
@@ -64,9 +64,8 @@ function obtenerDatosGenerales() {
                 obtenerProductosPorUnidades(vListItems) :
                 obtenerProductosPorCantidad(vListItems)
         };
-
         abrirEnlaceProspal(datosProspal);
-    } catch (error) { console.error(error); }
+    } catch (error) { mostrarAlertaError(error); }
 }
 
 function abrirEnlaceProspal(pParams) {

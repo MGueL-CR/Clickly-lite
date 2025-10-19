@@ -83,6 +83,10 @@ function obtenerParametrosURL() {
     return vParams.size > 0 ? vParams : noURL;
 }
 
+function validarExistenciaParametros(pParam) {
+    return obtenerURLActual().searchParams.has(pParam);
+}
+
 function validarPathname(pPathname) {
     return obtenerURLActual().pathname.includes(pPathname);
 }
