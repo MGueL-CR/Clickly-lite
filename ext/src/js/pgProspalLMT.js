@@ -3,9 +3,9 @@ const vObj = new Object();
 function mainProspalLMT() {
     try {
         if (validarExistenciaParametros('MRS')) {
-            generarClaseProspal();
             observarLoader(() => {
                 console.log('Continuacion ');
+                generarClaseProspal();
                 seleccionarPestaña();
             });
         }
@@ -14,15 +14,15 @@ function mainProspalLMT() {
     }
 }
 
-function observarLoader(cargaCompleta) {
+function observarLoader(continuarProceso) {
     const observer = new MutationObserver(() => {
         const loader = document.querySelector('.loading-bar');
 
         if (!loader) {
-            console.clear();
+            //console.clear();
             console.log('Loader finalizó!!!');
             observer.disconnect(); // Detiene el observer
-            cargaCompleta(); // Ejecuta el siguiente paso
+            continuarProceso(); // Ejecuta el siguiente paso
         }
     });
 
@@ -48,12 +48,10 @@ function agregarBotonContinuar() {
 
 function generarClaseProspal() {
     const urlParams = obtenerParametrosURL();
-    vObj.prospal = urlParams.size > 0 ?
-        new ClassProspal(
-            urlParams.get("MRS"),
-            urlParams.get("WWID"),
-            urlParams.get("ITEMS")) :
-        null;
+    vObj.prospal = new ClassProspal(
+        urlParams.get("MRS"),
+        urlParams.get("WWID"),
+        urlParams.get("ITEMS"));
 }
 
 function obtenerFilasFormulario() {
@@ -96,7 +94,7 @@ function seleccionarPestaña() {
     pestañas.lastElementChild.click();
 
     observarLoader(() => {
-        console.clear();
+        //console.clear();
         console.log('Loader #2 Finalizado!!');
         console.log('Click en el tab << Create Traveler >>');
         obtenerCamposFormulario();
@@ -106,10 +104,8 @@ function seleccionarPestaña() {
 
 function completarFormSuperior() {
     agregarBotonContinuar();
-    const txtMaterialCode = vObj.form.txtMatCode;
-    const txtWWID = vObj.form.txtWWID;
-    agregarValorAlCampo(txtMaterialCode, 0, vObj.prospal.materialCode);
-    autoRellenarCampos(txtWWID, 0, vObj.prospal.userID);
+    agregarVsalorAlCampo(vObj.form.txtMatCode, 0, vObj.prospal.materialCode);
+    autoRellenarCampos(vObj.form.txtWWID, 0, vObj.prospal.userID);
     obtenerObjetoPorID('btnContinuar').focus();
 }
 
