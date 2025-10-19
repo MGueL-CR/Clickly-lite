@@ -1,7 +1,6 @@
 function mostrarListaLotes(pSources) {
-    const listaLotes = pSources.map(item => `\t${item.trim().split(' ')[0]} ✔\n`);
-    listaLotes.unshift("\n\nLots:\n");
-    return listaLotes.join('');
+    const listaLotes = pSources.map(item => `\t${item.trim().split(' ').at(0)} ✔\n`);
+    return `\n\nLots:\n${listaLotes.join('')}`;
 }
 
 function mostrarLotes(pContenido) {
