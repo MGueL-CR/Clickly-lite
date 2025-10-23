@@ -200,6 +200,10 @@ function obtenerElementoPorClase(pObj, pClase) {
     return pObj.getElementsByClassName(pClase);
 }
 
+function buscarElementoPorClase(pClase, pIndex) {
+    return document.getElementsByClassName(pClase).item(pIndex);
+}
+
 // ElementsByTagName
 
 function obtenerElementosPorTags(pObj, pTag) {
