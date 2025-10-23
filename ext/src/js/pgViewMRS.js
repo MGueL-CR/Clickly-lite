@@ -1,6 +1,25 @@
+function paginaMRSLista(continuarProceso) {
+    const nvoObserver = new MutationObserver(() => {
+        const vNode = document.getElementById("topNavigationBar");
+        if (vNode) {
+            nvoObserver.disconnect();
+            continuarProceso();
+        }
+    });
+
+    nvoObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+}
+
 function mainViewMRS() {
-    crearPopoverError();
-    insertarBotonProspal();
+    try {
+        if (leerDatosURL().vId == "ShippingDiv") {
+            crearPopoverError();
+            insertarBotonProspal();
+        }
+    } catch (err) { mostrarAlertaError(error); }
 }
 
 function leerDatosURL() {
@@ -37,18 +56,15 @@ function generarCelda(pBoton) {
 }
 
 function insertarBotonProspal() {
-    const { vId } = leerDatosURL();
     try {
-        if (vId == "ShippingDiv") {
-            setTimeout(() => {
-                const topSection = obtenerObjetoPorID('topSection');
-                const panel = obtenerSelectoresPorObjeto(topSection, 'tr').item(0);
-                const nvoIcono = generarIcono();
-                const nvoBoton = generarBoton(nvoIcono);
-                const nvaCelda = generarCelda(nvoBoton);
-                nuevoContenedor(panel, [nvaCelda]);
-            }, 2000);
-        }
+        paginaMRSLista(() => {
+            const topSection = obtenerObjetoPorID('topSection');
+            const panel = obtenerSelectoresPorObjeto(topSection, 'tr').item(0);
+            const nvoIcono = generarIcono();
+            const nvoBoton = generarBoton(nvoIcono);
+            const nvaCelda = generarCelda(nvoBoton);
+            nuevoContenedor(panel, [nvaCelda]);
+        });
     } catch (error) { mostrarAlertaError(error); }
 }
 
@@ -90,10 +106,18 @@ function obtenerListaGeneral(pMainContent) {
     return rows.map(x => x.children);
 }
 
-function obtenerProductosPorUnidades(pList) {
-    const listUnidades = pList.map((x) => {
-        return { "lot": x.item(7).textContent.trim(), "part": x.item(6).textContent.trim(), "qty": parseInt(x.item(1).textContent.trim()) }
+function generarListaProductos(pList, pIdxLot, pIdxPart, pIdxQty) {
+    return pList.map((x) => {
+        return {
+            "lot": x.item(pIdxLot).textContent.trim(),
+            "part": x.item(pIdxPart).textContent.trim(),
+            "qty": parseInt(x.item(pIdxQty).textContent.trim())
+        }
     });
+}
+
+function obtenerProductosPorUnidades(pList) {
+    const listUnidades = generarListaProductos(pList, 7, 6, 1);
 
     const listProductos = Object.values(listUnidades.reduce((lote, unidad) => {
         if (lote[unidad.lot]) {
@@ -107,7 +131,5 @@ function obtenerProductosPorUnidades(pList) {
 }
 
 function obtenerProductosPorCantidad(pList) {
-    return pList.map((x) => {
-        return { "lot": x.item(4).textContent.trim(), "part": x.item(3).textContent.trim(), "qty": parseInt(x.item(1).textContent.trim()) }
-    });
+    return generarListaProductos(pList, 4, 3, 1);
 }
