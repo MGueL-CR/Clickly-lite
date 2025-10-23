@@ -42,7 +42,7 @@ function generarBoton(pIcono) {
     const tag = nuevoBoton("btnProspal", "btn btn-outline-primary btn-sm button", "Abrir Prospal", "");
     addAtributo(tag, "_ngcontent-pej-c3", "");
     tag.textContent = "Abrir Prospal ";
-    tag.addEventListener('click', obtenerDatosGenerales, false);
+    tag.addEventListener('click', abrirEnlaceProspal, false);
     nuevoContenedor(tag, [pIcono]);
     return tag;
 }
@@ -73,22 +73,22 @@ function obtenerDatosGenerales() {
         const { vMrs, vType } = leerDatosURL();
         const mainBody = document.getElementById("bottomSection");
         const vListItems = obtenerListaGeneral(mainBody);
-        const datosProspal = {
+        return {
             "numMRS": vMrs,
             "numWWID": obtenerNumeroWWID(mainBody),
             "listItems": vType == "UNIT" ?
                 obtenerProductosPorUnidades(vListItems) :
                 obtenerProductosPorCantidad(vListItems)
         };
-        abrirEnlaceProspal(datosProspal);
     } catch (error) { mostrarAlertaError(error); }
 }
 
-function abrirEnlaceProspal(pParams) {
+function abrirEnlaceProspal() {
+    const datosProspal = obtenerDatosGenerales();
     const urlProspal = generarNuevaURL("https://prospal-prd.app.intel.com/lbManualTraveler");
-    const convertirATexto = JSON.stringify(pParams.listItems);
-    agregarParametroURL(urlProspal, "MRS", pParams.numMRS);
-    agregarParametroURL(urlProspal, "WWID", pParams.numWWID);
+    const convertirATexto = JSON.stringify(datosProspal.listItems);
+    agregarParametroURL(urlProspal, "MRS", datosProspal.numMRS);
+    agregarParametroURL(urlProspal, "WWID", datosProspal.numWWID);
     agregarParametroURL(urlProspal, "ITEMS", codificarValor(convertirATexto));
     abrirNuevoEnlace(urlProspal, "_self")
 }
