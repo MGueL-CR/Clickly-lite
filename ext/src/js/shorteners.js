@@ -92,7 +92,6 @@ function validarPathname(pPathname) {
 }
 
 function validarContenidoURL(pValor) {
-    console.log(obtenerURLActual().pathname);
     return window.location.href.includes(pValor);
 }
 
