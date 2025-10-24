@@ -119,17 +119,21 @@ function validarContadorItems(pValor, pTotal, pBoton) {
     establacerContenidoPorID('spnCounter', `${nvoEstado} (${pValor}/${pTotal})`);
 }
 
-function generarFormatoPartType(pPartType) {
-    const nvoArray = pPartType.split(" ");
+function completarFormato(pPkg, pDvc, pRv, pStp) {
+    return `${pPkg}${pDvc} ${pRv} ${pStp}`;
+}
 
-    if (nvoArray.length >= 4) {
-        if (nvoArray.includes("")) {
-            return `${nvoArray.at(0)}${nvoArray.at(1)}   ${nvoArray.at(3)}`;
+function generarFormatoPartType(pPartType) {
+    const [vPkg, vDvc, vRev, vStp] = pPartType.split(" ");
+
+    if (vStp) {
+        if (vRev === "") {
+            return completarFormato(vPkg, vDvc, " ", vStp);
         } else {
-            return `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)} ${nvoArray.at(3)}`;
+            return completarFormato(vPkg, vDvc, vRev, vStp);
         }
     } else {
-        return `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)}`;
+        return completarFormato(vPkg, vDvc, vRev, "");
     }
 }
 
