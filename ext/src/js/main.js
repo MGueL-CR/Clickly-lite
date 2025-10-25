@@ -11,10 +11,7 @@ try {
 
             if (validarPathname("lbManualTraveler")) { mainProspalLMT(); return; }
 
-            if (validarPathname("Error.aspx")) {
-                abrirNuevoEnlace('https://vortexreports.intel.com/Index.aspx', '_self');
-                return;
-            }
+            if (validarPathname("Error.aspx")) { abrirNuevoEnlace(obtenerURLActual().hostname, '_self'); }
         } catch (err) {
             mostrarAlertaError(err);
         }
