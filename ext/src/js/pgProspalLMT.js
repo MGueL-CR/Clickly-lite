@@ -3,8 +3,8 @@ const vObj = new Object();
 function mainProspalLMT() {
     try {
         if (validarExistenciaParametros('MRS')) {
-            observarLoader(() => {
-                console.log('Continuacion ');
+            webDisponible(() => {
+                crearPopoverError();
                 generarClaseProspal();
                 seleccionarPestaña();
             });
@@ -14,19 +14,15 @@ function mainProspalLMT() {
     }
 }
 
-function observarLoader(continuarProceso) {
-    const observer = new MutationObserver(() => {
-        const loader = document.querySelector('.loading-bar');
-
-        if (!loader) {
-            //console.clear();
-            console.log('Loader finalizó!!!');
-            observer.disconnect(); // Detiene el observer
-            continuarProceso(); // Ejecuta el siguiente paso
+function webDisponible(continuarProceso) {
+    const nvoObserver = new MutationObserver(() => {
+        if (!obtenerPorSelector('.loading-bar')) {
+            nvoObserver.disconnect();
+            continuarProceso();
         }
     });
 
-    observer.observe(document.body, {
+    nvoObserver.observe(document.body, {
         childList: true,
         subtree: true,
     });
@@ -55,7 +51,7 @@ function generarClaseProspal() {
 }
 
 function obtenerFilasFormulario() {
-    const tabla = document.getElementsByClassName('manualTravelcreatelayoutTable').item(0);
+    const tabla = buscarElementoPorClase('manualTravelcreatelayoutTable', 0);
     return tabla.rows;
 }
 
@@ -67,20 +63,12 @@ function obtenerCampo(pTipo, pIndex, pFila) {
     }
 }
 
-function agregarValorAlCampo(pInput, pIndex, pValor) {
-    pInput.focus();
-    if (pInput.tagName == "INPUT") {
-        pInput.value += pValor[pIndex];
-    } else {
-        pInput.textContent += pValor[pIndex];
-    }
-}
-
 function autoRellenarCampos(pInput, pIndex, pValor) {
     if (pIndex < pValor.length) {
-        agregarValorAlCampo(pInput, pIndex, pValor)
+        pInput.focus();
+        pInput.value += pValor[pIndex];
 
-        const eventoInput = new Event("input", { bubbles: true });
+        const eventoInput = new Event("change", { bubbles: true });
         pInput.dispatchEvent(eventoInput);
 
         pIndex++;
@@ -93,18 +81,13 @@ function seleccionarPestaña() {
     const pestañas = obtenerElementosPorTags(contenedor, 'ul').item(0);
     pestañas.lastElementChild.click();
 
-    observarLoader(() => {
-        //console.clear();
-        console.log('Loader #2 Finalizado!!');
-        console.log('Click en el tab << Create Traveler >>');
-        obtenerCamposFormulario();
-        completarFormSuperior();
-    });
+    obtenerCamposFormulario();
+    completarFormSuperior();
 }
 
 function completarFormSuperior() {
     agregarBotonContinuar();
-    agregarVsalorAlCampo(vObj.form.txtMatCode, 0, vObj.prospal.materialCode);
+    autoRellenarCampos(vObj.form.txtMatCode, 0, vObj.prospal.materialCode);
     autoRellenarCampos(vObj.form.txtWWID, 0, vObj.prospal.userID);
     obtenerObjetoPorID('btnContinuar').focus();
 }
@@ -116,11 +99,8 @@ function obtenerCamposFormulario() {
         "txtMatCode": obtenerCampo('input', 1, filas.item(2)),
         "cmbPartType": obtenerCampo('input', 0, filas.item(14)),
         "txtLot": obtenerCampo('input', 1, filas.item(14)),
-        "cmbOwner": obtenerCampo('select', 0, filas.item(16)),
         "spnOwner": obtenerCampo('k-input', 1, filas.item(16)),
-        "cmbSiteId": obtenerCampo('select', 0, filas.item(17)),
         "spnSiteId": obtenerCampo('k-input', 0, filas.item(17)),
-        "cmbAssyId": obtenerCampo('select', 0, filas.item(18)),
         "spnAssyId": obtenerCampo('k-input', 0, filas.item(18)),
         "txtQty": obtenerCampo('input', 0, filas.item(19)),
         "txtComment": obtenerCampo('textarea', 0, filas.item(19))
@@ -128,10 +108,9 @@ function obtenerCamposFormulario() {
 }
 
 function validarContadorItems(pValor, pTotal, pBoton) {
-    let nvoEstado = "";
+    let nvoEstado = "Continuar";
     pValor++;
     if (pValor < pTotal) {
-        nvoEstado = 'Continuar';
         guardarValorEnSS('indexItem', pValor);
     } else {
         nvoEstado = 'Completado';
@@ -140,21 +119,22 @@ function validarContadorItems(pValor, pTotal, pBoton) {
     establacerContenidoPorID('spnCounter', `${nvoEstado} (${pValor}/${pTotal})`);
 }
 
-function generarFormatoPartType(pPartType) {
-    const nvoArray = pPartType.split(" ");
-    let nvoFormato = "";
+function completarFormato(pPkg, pDvc, pRv, pStp) {
+    return `${pPkg}${pDvc} ${pRv} ${pStp}`;
+}
 
-    if (nvoArray.length > 3) {
-        if (nvoArray.includes("")) {
-            nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)} ${nvoArray.at(4)}`;
+function generarFormatoPartType(pPartType) {
+    const [vPkg, vDvc, vRev, vStp] = pPartType.split(" ");
+
+    if (vStp) {
+        if (vRev === "") {
+            return completarFormato(vPkg, vDvc, " ", vStp);
         } else {
-            nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)} ${nvoArray.at(3)}`;
+            return completarFormato(vPkg, vDvc, vRev, vStp);
         }
     } else {
-        nvoFormato = `${nvoArray.at(0)}${nvoArray.at(1)} ${nvoArray.at(2)}`;
+        return completarFormato(vPkg, vDvc, vRev, "");
     }
-
-    return nvoFormato;
 }
 
 function completarFormInferior() {
@@ -166,49 +146,32 @@ function completarFormInferior() {
     const objItem = lista.items.at(numIndex);
 
     autoRellenarCampos(form.txtLot, 0, objItem.lot);
-    //agregarValorAlCampo(form.cmbOwner, 0, objProspal.owner);
     seleccionarOpcion(form.spnOwner, 0, objProspal.owner);
-    //agregarValorAlCampo(form.cmbSiteId, 0, objProspal.fabID);
     seleccionarOpcion(form.spnSiteId, 0, objProspal.fabID);
-    //agregarValorAlCampo(form.cmbAssyId, 0, objProspal.assyID);
     seleccionarOpcion(form.spnAssyId, 0, objProspal.assyID);
     autoRellenarCampos(form.txtQty, 0, objItem.qty.toString().padStart(2, "0"));
     autoRellenarCampos(form.txtComment, 0, objProspal.insertarComentario());
     autoRellenarCampos(form.cmbPartType, 0, generarFormatoPartType(objItem.part));
 
-    //validarContadorItems(numIndex, lista.total, this);
+    validarContadorItems(numIndex, lista.total, this);
 }
 
 function seleccionarOpcion(pSelect, pIntentos, pValor) {
-    // Paso 1: Abrir el dropdown (simular clic en el span que lo activa)
-    const dropdownTrigger = obtenerPadre(pSelect);//.querySelector('.k-dropdown-wrap');
+    const dropdownTrigger = obtenerPadre(pSelect);
 
-    if (!dropdownTrigger) return console.warn('No se encontró el activador del dropdown');
+    if (dropdownTrigger) {
+        dropdownTrigger.click();
+        const intervalo = setInterval(() => {
+            const opciones = document.querySelectorAll('.k-list-container .k-item');
 
-    dropdownTrigger.click(); // Abre el menú
-
-    // Paso 2: Esperar a que se renderice la lista y seleccionar la opción
-    const intervalo = setInterval(() => {
-        const opciones = document.querySelectorAll('.k-list-container .k-item');
-        if (opciones.length > 0) {
-            clearInterval(intervalo);
-
-            // Buscar la opción que coincide con el texto
-            const opcion = Array.from(opciones).find(op => op.textContent.trim() === pValor);
-            if (opcion) {
-                opcion.click(); // Simula la selección
-                console.log(`✅ Opción "${pValor}" seleccionada`);
-            } else {
-                console.warn(`❌ No se encontró la opción "${pValor}"`);
+            if (opciones.length > 0) {
+                clearInterval(intervalo);
+                const opcion = Array.from(opciones).find(op => op.textContent.trim() === pValor);
+                if (opcion) opcion.click();
             }
-        }
-        console.time(pValor)
-        console.log('No item...');
-        pIntentos++
-        if (pIntentos > 25) {
-            console.log('Espera agotada...');
-            clearInterval(intervalo);
-            console.timeEnd(pValor)
-        }
-    }, 200); // Revisa cada 200ms hasta que aparezca la lista
+
+            pIntentos++
+            if (pIntentos > 25) clearInterval(intervalo);
+        }, 200);
+    }
 }

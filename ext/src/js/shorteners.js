@@ -92,7 +92,6 @@ function validarPathname(pPathname) {
 }
 
 function validarContenidoURL(pValor) {
-    console.log(obtenerURLActual().pathname);
     return window.location.href.includes(pValor);
 }
 
@@ -198,6 +197,10 @@ function obtenerElementosPorName(pName) {
 
 function obtenerElementoPorClase(pObj, pClase) {
     return pObj.getElementsByClassName(pClase);
+}
+
+function buscarElementoPorClase(pClase, pIndex) {
+    return document.getElementsByClassName(pClase).item(pIndex);
 }
 
 // ElementsByTagName

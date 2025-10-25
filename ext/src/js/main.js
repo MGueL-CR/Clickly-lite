@@ -1,20 +1,17 @@
 try {
     window.addEventListener("load", () => {
         try {
-            if (validarContenidoURL("crvle")) { mainQueueIC(); return; }
+            if (validarPathname("ICQueue")) { mainQueueIC(); return; }
 
-            if (validarContenidoURL("RunCardFilter")) { mainFormRC(); return; }
+            if (validarPathname("RunCardFilter.aspx")) { mainFormRC(); return; }
 
-            if (validarContenidoURL("RunCard.aspx")) { mainPrintRC(); return; }
+            if (validarPathname("RunCard.aspx")) { mainPrintRC(); return; }
 
             if (validarContenidoURL("view-printable")) { mainViewMRS(); return; }
 
-            if (validarContenidoURL("prospal")) { mainProspalLMT(); return; }
+            if (validarPathname("lbManualTraveler")) { mainProspalLMT(); return; }
 
-            if (validarContenidoURL("Error.aspx")) {
-                abrirNuevoEnlace('https://vortexreports.intel.com/Index.aspx', '_self');
-                return;
-            }
+            if (validarPathname("Error.aspx")) { abrirNuevoEnlace(obtenerURLActual().hostname, '_self'); }
         } catch (err) {
             mostrarAlertaError(err);
         }
