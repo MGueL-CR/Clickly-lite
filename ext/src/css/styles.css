@@ -340,3 +340,11 @@
         right: 235px !important;
     }
 }
+
+/**
+*   CSS PAGINA PROSPAL
+*/
+
+.hide-list .k-list-container {
+    opacity: 0;
+}

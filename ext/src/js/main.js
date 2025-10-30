@@ -11,7 +11,7 @@ try {
 
             if (validarPathname("lbManualTraveler")) { mainProspalLMT(); return; }
 
-            if (validarPathname("Error.aspx")) { abrirNuevoEnlace(obtenerURLActual().hostname, '_self'); }
+            if (validarPathname("Error.aspx")) { abrirNuevoEnlace(obtenerURLActual().origin, '_self'); }
         } catch (err) {
             mostrarAlertaError(err);
         }
