@@ -28,10 +28,12 @@ function webDisponible(continuarProceso) {
     });
 }
 
-function agregarBotonContinuar() {
+function obtenerSeccionBotones() {
     const filaBotones = obtenerFilasFormulario().item(13);
-    const divBotones = obtenerElementosPorTags(filaBotones, 'div').item(0).firstElementChild;
+    return obtenerElementosPorTags(filaBotones, 'div').item(0).firstElementChild;
+}
 
+function agregarBotonContinuar() {
     const btnContinuar = nuevoBoton('btnContinuar', 'btn btn-info mx-1', 'Completar Campos');
     const spnIcon = nuevoSpan('spnIcono', 'intelicon-play', '');
     const spnCount = nuevoSpan('spnCounter', 'px-1', `Continuar (0/${vObj.prospal.obtenerTotalItems()})`);
@@ -39,7 +41,7 @@ function agregarBotonContinuar() {
     btnContinuar.addEventListener('click', completarFormInferior);
 
     nuevoContenedor(btnContinuar, [spnIcon, spnCount]);
-    nuevoContenedor(divBotones, [btnContinuar]);
+    nuevoContenedor(obtenerSeccionBotones(), [btnContinuar]);
 }
 
 function generarClaseProspal() {
@@ -82,11 +84,30 @@ function seleccionarPestaña() {
     pestañas.lastElementChild.click();
 
     obtenerCamposFormulario();
+    insertarPropiedadesAdicionales();
+    agregarBotonContinuar();
     completarFormSuperior();
 }
 
+function seleccionarCelda(pFilas, pIndex) {
+    const vFila = pFilas.item(pIndex);
+    const vCelda = vFila.lastElementChild;
+    return vCelda;
+}
+
+function insertarPropiedadesAdicionales() {
+    const listaFilas = obtenerFilasFormulario();
+    const btnAgregar = obtenerSeccionBotones().lastElementChild;
+    const cldOwner = seleccionarCelda(listaFilas, 16).firstElementChild;
+    const cldFabSite = seleccionarCelda(listaFilas, 17).firstElementChild;
+    const cldAssyID = seleccionarCelda(listaFilas, 18).firstElementChild;
+    btnAgregar.id = "btnAddItem";
+    agregarClases(cldOwner, "hide-list");
+    agregarClases(cldFabSite, "hide-list");
+    agregarClases(cldAssyID, "hide-list");
+}
+
 function completarFormSuperior() {
-    agregarBotonContinuar();
     autoRellenarCampos(vObj.form.txtMatCode, 0, vObj.prospal.materialCode);
     autoRellenarCampos(vObj.form.txtWWID, 0, vObj.prospal.userID);
     obtenerObjetoPorID('btnContinuar').focus();
@@ -126,15 +147,14 @@ function completarFormato(pPkg, pDvc, pRv, pStp) {
 function generarFormatoPartType(pPartType) {
     const [vPkg, vDvc, vRev, vStp] = pPartType.split(" ");
 
-    if (vStp) {
-        if (vRev === "") {
-            return completarFormato(vPkg, vDvc, " ", vStp);
-        } else {
-            return completarFormato(vPkg, vDvc, vRev, vStp);
-        }
+    if (!vStp) return completarFormato(vPkg, vDvc, vRev, "");
+
+    if (vRev === "") {
+        return completarFormato(vPkg, vDvc, " ", vStp);
     } else {
-        return completarFormato(vPkg, vDvc, vRev, "");
+        return completarFormato(vPkg, vDvc, vRev, vStp);
     }
+
 }
 
 function completarFormInferior() {
@@ -145,13 +165,19 @@ function completarFormInferior() {
     const numIndex = vContador ? vContador : 0;
     const objItem = lista.items.at(numIndex);
 
-    autoRellenarCampos(form.txtLot, 0, objItem.lot);
-    seleccionarOpcion(form.spnOwner, 0, objProspal.owner);
-    seleccionarOpcion(form.spnSiteId, 0, objProspal.fabID);
-    seleccionarOpcion(form.spnAssyId, 0, objProspal.assyID);
-    autoRellenarCampos(form.txtQty, 0, objItem.qty.toString().padStart(2, "0"));
-    autoRellenarCampos(form.txtComment, 0, objProspal.insertarComentario());
     autoRellenarCampos(form.cmbPartType, 0, generarFormatoPartType(objItem.part));
+
+    parttypeSeleccionado(() => {
+        webDisponible(() => {
+            autoRellenarCampos(form.txtLot, 0, objItem.lot);
+            seleccionarOpcion(form.spnOwner, 0, objProspal.owner);
+            seleccionarOpcion(form.spnSiteId, 0, objProspal.fabID);
+            seleccionarOpcion(form.spnAssyId, 0, objProspal.assyID);
+            autoRellenarCampos(form.txtQty, 0, objItem.qty.toString().padStart(2, "0"));
+            autoRellenarCampos(form.txtComment, 0, objProspal.insertarComentario());
+            obtenerObjetoPorID('btnAddItem').focus();
+        });
+    });
 
     validarContadorItems(numIndex, lista.total, this);
 }
@@ -174,4 +200,18 @@ function seleccionarOpcion(pSelect, pIntentos, pValor) {
             if (pIntentos > 25) clearInterval(intervalo);
         }, 200);
     }
+}
+
+function parttypeSeleccionado(continuarProceso) {
+    const nvoObserver = new MutationObserver(() => {
+        if (obtenerPorSelector('.loading-bar')) {
+            nvoObserver.disconnect();
+            continuarProceso();
+        }
+    });
+
+    nvoObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
 }
