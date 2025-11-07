@@ -41,15 +41,6 @@ function recargarPagina() {
     location.reload();
 }
 
-function obtenerParametroActual() {
-    const vValor = window.location.href.split("?")[1]
-    return typeof vValor !== "undefined" ? decodificarValor(vValor) : vValor;
-}
-
-function validarContenidoURL(pValor) {
-    return window.location.href.includes(pValor);
-}
-
 function copiarValor(pValor) {
     navigator.clipboard.writeText(pValor);
 }
@@ -75,8 +66,49 @@ function decodificarValor(pValor) {
     return window.atob(pValor);
 }
 
+// URL
+
+function obtenerURLActual() {
+    return new URL(window.location.href);
+}
+
+function generarNuevaURL(pURL) {
+    return new URL(pURL);
+}
+
+function obtenerParametrosURL() {
+    let noURL;
+    const vURL = obtenerURLActual();
+    const vParams = new URLSearchParams(vURL.search);
+    return vParams.size > 0 ? vParams : noURL;
+}
+
+function validarExistenciaParametros(pParam) {
+    return obtenerURLActual().searchParams.has(pParam);
+}
+
+function validarPathname(pPathname) {
+    return obtenerURLActual().pathname.includes(pPathname);
+}
+
+function validarContenidoURL(pValor) {
+    return window.location.href.includes(pValor);
+}
+
 function abrirNuevoEnlace(pURL, pModo) {
-    window.open(pURL, pModo);
+    window.open(generarNuevaURL(pURL), pModo);
+}
+
+function agregarParametroURL(pURL, pNombre, pValor) {
+    pURL.searchParams.append(pNombre, pValor);
+}
+
+function modificarPropiedadParametroURL(pURL, pNombre, pValor) {
+    pURL.searchParams.set(pNombre, pValor);
+}
+
+function obtenerParametroURL(pURL, pNombre) {
+    return pURL.searchParams.get(pNombre);
 }
 
 // DOM
@@ -167,6 +199,10 @@ function obtenerElementoPorClase(pObj, pClase) {
     return pObj.getElementsByClassName(pClase);
 }
 
+function buscarElementoPorClase(pClase, pIndex) {
+    return document.getElementsByClassName(pClase).item(pIndex);
+}
+
 // ElementsByTagName
 
 function obtenerElementosPorTags(pObj, pTag) {
@@ -193,4 +229,8 @@ function obtenerSelectores(pType) {
 
 function obtenerSelectorPorObjeto(pObj, pType) {
     return pObj.querySelector(pType);
+}
+
+function obtenerSelectoresPorObjeto(pObj, pType) {
+    return pObj.querySelectorAll(pType);
 }

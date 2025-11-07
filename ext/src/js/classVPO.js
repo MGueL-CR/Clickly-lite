@@ -18,7 +18,9 @@ class ClassVPO {
     }
 
     generarEnlace() {
-        return `${this.urlVortex}?${codificarValor(this.convertirATexto())}`;
+        const nvaURL = generarNuevaURL(this.urlVortex);
+        nvaURL.searchParams.set('obj', codificarValor(this.convertirATexto()))
+        return nvaURL;
     }
 
     guardarVPO() {

@@ -2,7 +2,7 @@
   "name": "Clickly (Lite)",
   "description": "Simplifica, automatiza y ahorra tiempo en esas tareas repetitivas de sus requests.",
   "author": "@MGueL-CR",
-  "version": "1.9.0627.25",
+  "version": "2.0.1108.25",
   "manifest_version": 3,
   "action": {
     "default_popup": "/src/assets/popupWeb.html",
@@ -23,6 +23,7 @@
     {
       "js": [
         "./src/js/classVPO.js",
+        "./src/js/classProspal.js",
         "./src/js/batchProcessor.js",
         "./src/js/shorteners.js",
         "./src/js/components.js",
@@ -30,6 +31,8 @@
         "./src/js/pgQueueIC.js",
         "./src/js/pgFormRC.js",
         "./src/js/pgPrintRC.js",
+        "./src/js/pgViewMRS.js",
+        "./src/js/pgProspalLMT.js",
         "./src/js/main.js"
       ],
       "css": [
@@ -39,8 +42,9 @@
       "matches": [
         "https://crvle-request-tool.intel.com/*",
         "https://crvle-vporequests.intel.com/*",
-        "https://crvle-vporequests.apps1-or-int.icloud.intel.com/*",
-        "https://vortexreports.intel.com/*"
+        "https://vortexreports.intel.com/*",
+        "https://mms-frontend-prod.app.intel.com/*",
+        "https://prospal-prd.app.intel.com/*"
       ]
     }
   ]
