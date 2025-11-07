@@ -97,11 +97,10 @@ function seleccionarCelda(pFilas, pIndex) {
 
 function insertarPropiedadesAdicionales() {
     const listaFilas = obtenerFilasFormulario();
-    const btnAgregar = obtenerSeccionBotones().lastElementChild;
     const cldOwner = seleccionarCelda(listaFilas, 16).firstElementChild;
     const cldFabSite = seleccionarCelda(listaFilas, 17).firstElementChild;
     const cldAssyID = seleccionarCelda(listaFilas, 18).firstElementChild;
-    btnAgregar.id = "btnAddItem";
+
     agregarClases(cldOwner, "hide-list");
     agregarClases(cldFabSite, "hide-list");
     agregarClases(cldAssyID, "hide-list");
@@ -175,11 +174,9 @@ function completarFormInferior() {
             seleccionarOpcion(form.spnAssyId, 0, objProspal.assyID);
             autoRellenarCampos(form.txtQty, 0, objItem.qty.toString().padStart(2, "0"));
             autoRellenarCampos(form.txtComment, 0, objProspal.insertarComentario());
-            obtenerObjetoPorID('btnAddItem').focus();
+            validarContadorItems(numIndex, lista.total, this);
         });
     });
-
-    validarContadorItems(numIndex, lista.total, this);
 }
 
 function seleccionarOpcion(pSelect, pIntentos, pValor) {
