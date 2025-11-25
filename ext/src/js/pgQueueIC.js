@@ -1,7 +1,7 @@
 function mainQueueIC() {
     crearPopoverError();
     asignarElementosMarcados();
-    if (!leerValorEnSS('items')) {
+    if (!leerValorEnSS('listaLotes')) {
         establecerFunciones(obtenerTablas());
         completarSelectAssignTo(leerValorEnSS('assigned'));
         mantenerFiltros(leerValorEnSS('porTipo'), leerValorEnSS('porAsignado'));
@@ -88,7 +88,7 @@ function aplicarFiltroPorAsignado(pFiltro) {
     const porTipo = leerValorEnSS('porTipo') || 'all';
     aplicarFiltrosCombinados(porTipo, pFiltro);
 }
-
+/*
 function registrarElementosMarcados() {
     if (leerValorEnSS('intentos')) {
         const filas = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'));
@@ -102,31 +102,36 @@ function registrarElementosMarcados() {
         }
     }
 }
-
+*/
 function asignarElementosMarcados() {
-    const itemsActuales = leerValorEnSS('items');
-    let valIndex = leerValorEnSS('index') ? parseInt(leerValorEnSS('index')) : 100;
+    const itemsActuales = leerValorEnSS('listaLotes'); //leerValorEnSS('items');
+    //const valIndex = leerValorEnSS('index') ? parseInt(leerValorEnSS('index')) : 100;
 
     if (itemsActuales) {
-        const elementos = itemsActuales.split(',');
-        const nvoItem = elementos[valIndex];
+        const elementos = JSON.parse(itemsActuales) //itemsActuales.split(',');
+        const nvoItem = elementos.shift(); //elementos[valIndex];
 
-        if (valIndex >= elementos.length) {
-            ['items', 'index', 'intentos'].forEach(i => removerValorEnSS(i));
+        //if (valIndex >= elementos.length) {
+        if (elementos.length <= 0) {
+            //['items', 'index', 'intentos'].forEach(i => removerValorEnSS(i));
+            removerValorEnSS("listaLotes");
             modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
-            return;
+            //return;
         }
 
-        valIndex++
-        guardarValorEnSS('index', valIndex);
+        //valIndex++
+        //guardarValorEnSS('index', valIndex);
 
-        if (leerValorEnSS(nvoItem)) {
+        //if (leerValorEnSS(nvoItem)) {
+        if (nvoItem) {
             const nvaFila = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'))
-                .filter(iFila => obtenerHijo(iFila, 0).textContent.includes(nvoItem));
+                //.filter(iFila => obtenerHijo(iFila, 0).textContent.includes(nvoItem));
+                .filter(iFila => iFila.textContent.includes(nvoItem));
             const select = obtenerHijo(obtenerHijo(nvaFila[0], 6), 0);
             establacerContenidoPorID(select.id, select[1].value);
             establacerContenidoPorID('__EVENTTARGET', select.name);
-            removerValorEnSS(nvoItem);
+            //removerValorEnSS(nvoItem);
+            guardarValorEnSS('listaLotes', JSON.stringify(elementos));
             obtenerObjetoPorID('form1').submit();
         }
     }
@@ -194,7 +199,7 @@ function generarBotonAutoAsignar() {
     const dvGroup = nuevoDIV('dvAMark', 'input-group div-btns flex-nowrap');
     const spnText = nuevoSpan('spnAMark', 'mx-1', 'Asignar');
     const btnBoton = nuevoBoton('btnAMark', 'btn btn-light hd-button', 'Asignar lineas marcadas', '#000');
-    btnBoton.addEventListener('click', registrarElementosMarcados);
+    btnBoton.addEventListener('click', asignarElementosMarcados);
     nuevoContenedor(btnBoton, [nuevoIcono('icoAMark', 'bi bi-asterisk'), spnText]);
     nuevoContenedor(dvGroup, [btnBoton]);
     return dvGroup;
@@ -298,22 +303,26 @@ function marcarFilaActual(pFila, pCol01) {
     const spnSelect2 = obtenerElementoPorClase(col06, 'select2-selection__rendered')[0];
     const valOpcion = obtenerHijo(select, 1).value;
     const valCol00 = obtenerHijo(pFila, 0).textContent;
-    let intentos = leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
+    let listaLotes = !leerValorEnSS('listaLotes') ? new Array() : JSON.parse(leerValorEnSS('listaLotes'));
+    const intentos = listaLotes.length; //leerValorEnSS('intentos') ? parseInt(leerValorEnSS('intentos')) : 0;
     if (pFila.dataset.mark) {
-        intentos--;
+        //intentos--;
         removerAtributo(pFila, 'data-mark');
-        removerValorEnSS(valCol00);
+        listaLotes = listaLotes.filter(x => !x.includes(valCol00));
+        //removerValorEnSS(valCol00);
         establacerContenidoPorID(select.id, 0);
         establacerContenidoPorID(spnSelect2.id, 'None');
     } else {
         if (intentos > 5) { return; }
-        intentos++;
+        //intentos++;
         addAtributo(pFila, 'data-mark', 'mark');
-        guardarValorEnSS(valCol00, valCol00);
+        listaLotes.push(valCol00);
+        //guardarValorEnSS(valCol00, valCol00);
         establacerContenidoPorID(select.id, valOpcion);
         establacerContenidoPorID(spnSelect2.id, select.options[select.selectedIndex].text);
     }
-    guardarValorEnSS('intentos', intentos);
+    //guardarValorEnSS('intentos', intentos);
+    guardarValorEnSS('listaLotes', JSON.stringify(listaLotes));
     intercambiarClase(pCol01, 'font-weight-bold');
     confirmarCopiado(pCol01);
 }
