@@ -109,25 +109,26 @@ function asignarElementosMarcados() {
 
     if (itemsActuales) {
         const elementos = JSON.parse(itemsActuales) //itemsActuales.split(',');
-        const nvoItem = elementos.shift(); //elementos[valIndex];
+        //const nvoItem = elementos[valIndex];
 
         //if (valIndex >= elementos.length) {
         if (elementos.length <= 0) {
             //['items', 'index', 'intentos'].forEach(i => removerValorEnSS(i));
             removerValorEnSS("listaLotes");
             modificarPropiedad(obtenerObjetoPorID('ReturnsDiv'), 'display', 'block');
-            //return;
+            return;
         }
 
         //valIndex++
         //guardarValorEnSS('index', valIndex);
-
+        const nvoItem = elementos.shift();
         //if (leerValorEnSS(nvoItem)) {
         if (nvoItem) {
-            const nvaFila = Array.from(obtenerFilas('MainContent_ReturnsDivGridView'))
+            const nvaFila = Array.from(obtenerObjetoPorID('MainContent_ReturnsDivGridView').rows)
                 //.filter(iFila => obtenerHijo(iFila, 0).textContent.includes(nvoItem));
-                .filter(iFila => iFila.textContent.includes(nvoItem));
-            const select = obtenerHijo(obtenerHijo(nvaFila[0], 6), 0);
+                .find(iFila => iFila.textContent.includes(nvoItem));
+            //const select = obtenerHijo(obtenerHijo(nvaFila[0], 6), 0);
+            const select = obtenerHijo(obtenerHijo(nvaFila, 6), 0);
             establacerContenidoPorID(select.id, select[1].value);
             establacerContenidoPorID('__EVENTTARGET', select.name);
             //removerValorEnSS(nvoItem);
