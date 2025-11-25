@@ -132,6 +132,7 @@ function validarContadorItems(pValor, pTotal, pBoton) {
     pValor++;
     if (pValor < pTotal) {
         guardarValorEnSS('indexItem', pValor);
+        pBoton.disabled = false;
     } else {
         nvoEstado = 'Completado';
         pBoton.disabled = true;
@@ -177,6 +178,7 @@ function completarFormInferior() {
             validarContadorItems(numIndex, lista.total, this);
         });
     });
+    this.disabled = true;
 }
 
 function seleccionarOpcion(pSelect, pIntentos, pValor) {
